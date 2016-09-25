@@ -17,5 +17,12 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:api');
 
+//User login/register
+//Route::post('login','UserController@login');
+//Route::post('signup','UserController@signup');
+//Route::get('logout','UserController@logout');
+
+
 // Create/Upload field
 Route::post('uploadfield','FieldController@uploadfield');
+

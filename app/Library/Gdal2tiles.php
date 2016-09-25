@@ -13,7 +13,11 @@ class Gdal2tiles
      */
     const tif_to_vrt_script_path = DIRECTORY_SEPARATOR . "scripts". DIRECTORY_SEPARATOR . "gdal.bat ";
 
+    /**
+     * Path to generate Tiles script
+     */
     const generate_tiles_sript_path = DIRECTORY_SEPARATOR . "scripts". DIRECTORY_SEPARATOR . "generateTiles.bat";
+
     /**
      * Generate vrt from tiff file
      * @param $path
@@ -30,10 +34,14 @@ class Gdal2tiles
         return $path . DIRECTORY_SEPARATOR . self::vrt_filename;
     }
 
+    /**
+     * Generate tiles of image based on the vrt file
+     * @param $vrt_file_path
+     * @param $output
+     */
     public function generateTiles($vrt_file_path, $output)
     {
         $re = [];
         exec(storage_path(self::generate_tiles_sript_path.' '.$vrt_file_path.' '.$output),$re);
-        dd($re);
     }
 }
