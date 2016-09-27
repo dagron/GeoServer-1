@@ -24,7 +24,11 @@ class DatabaseSeeder extends Seeder
         $field->fieldFolder = 'path';
         $field->user_id = 1;
         $field->date = date('Y-m-d');
-        $field->field_coordinations_id = null;
+        $field->x_min = 1;
+        $field->x_max = 1;
+        $field->y_min = 1;
+        $field->y_max = 1;
+
         $field->save();
     }
 }

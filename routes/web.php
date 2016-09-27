@@ -24,12 +24,16 @@ Route::get('/login', function () {
 Route::get('/register', function(){
     return view('auth.register');
 });
-Route::get('/createField', function () {
-    return view('createField');
+Route::group(['middleware' => 'web'], function (){
+    Route::get('createField', function () {
+        return view('createField');
+    });
 });
+
 Route::get('/showField', function () {
     return view('showField');
 });
+Route::get('/fieldPhases/{fieldName}', 'FieldPhasesController@index');
 
 Route::get('/demo', function () {
 

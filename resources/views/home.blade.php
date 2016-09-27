@@ -8,10 +8,12 @@
                 <div class="panel-heading">Dashboard</div>
 
                 <div class="panel-body">
-                    You are logged in!
                     @foreach($fields as $field)
-                        <p> {{ $field['fieldName'] }}</p>
+                        <div  onclick="location.href='fieldPhases/{{$field['fieldName']}}';" class="btn btn-info btn-block"> {{ $field['fieldName'] }}</div>
                     @endforeach
+
+                    <hr>
+                    <div onclick="location.href='createField';" class="btn-info btn">New Field</div>
                 </div>
             </div>
         </div>
