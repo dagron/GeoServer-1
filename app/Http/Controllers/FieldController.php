@@ -47,14 +47,24 @@ class FieldController extends Controller
             'field_image' => 'required|mimes:tiff'
         ], $messages);
 
+        $user_field = Field::where('user_id',Auth::user()->id)->where('fieldName', $request->input('fieldName'))->first();
+        if($user_field) {
+            return Redirect::back()->withErrors(['Field name already exists']);
+        }
+
         $usrid =Auth::user()->id;
         $fieldName = $request->input('fieldName');
         $date = $request->input('date');
 
-        $store_path = public_path('uploads') . DIRECTORY_SEPARATOR .
-                        hash('md5', $usrid) . DIRECTORY_SEPARATOR .
-                        hash('md5', $fieldName). DIRECTORY_SEPARATOR .
-                        hash('md5', $date);
+        $relative_path = 'uploads/'.
+            hash('md5', $usrid) .'/'.
+            hash('md5', $fieldName). '/' .
+            hash('md5', $date);
+
+        $store_path = public_path('uploads'). DIRECTORY_SEPARATOR .
+            hash('md5', $usrid) . DIRECTORY_SEPARATOR .
+            hash('md5', $fieldName). DIRECTORY_SEPARATOR .
+            hash('md5', $date);
 
         $file =  $request->file('field_image');
         $file->move($store_path, 'demo.tif');
@@ -67,7 +77,7 @@ class FieldController extends Controller
         $coordinates = $this->coordinatorExtractor->extractCoordinates($coordinates_json_filepath);
 
         $field = new Field();
-        $field->fieldFolder =   $store_path;
+        $field->fieldFolder =   $relative_path;
         $field->fieldName   =   $fieldName;
         $field->date        =   $date;
         $field->user_id     =   $usrid;
@@ -78,5 +88,61 @@ class FieldController extends Controller
         $field->save();
 
         return redirect('/');
+    }
+
+    public function uploadfieldDate(Request $request)
+    {
+        $messages = [
+            'required' => ' The :attribute is required'
+        ];
+
+        $this->validate($request,[
+            'date' => 'required|date',
+            'field_image' => 'required|mimes:tiff'
+        ], $messages);
+
+        $user_fields = Field::where('user_id',Auth::user()->id)->where('fieldName', $request->input('fieldName'))->get();
+        foreach ($user_fields as $user_field) {
+            if($user_field['date'] == $request->input('date')) {
+                return Redirect::back()->withErrors(['Field with that date exists']);
+            }
+        }
+
+        $usrid =Auth::user()->id;
+        $fieldName = $request->input('fieldName');
+        $date = $request->input('date');
+
+        $relative_path = 'uploads/'.
+            hash('md5', $usrid) .'/'.
+            hash('md5', $fieldName). '/' .
+            hash('md5', $date);
+
+        $store_path = public_path('uploads'). DIRECTORY_SEPARATOR .
+            hash('md5', $usrid) . DIRECTORY_SEPARATOR .
+            hash('md5', $fieldName). DIRECTORY_SEPARATOR .
+            hash('md5', $date);
+
+        $file =  $request->file('field_image');
+        $file->move($store_path, 'demo.tif');
+        $vrtfilepath = $this->gda2tiles->tifToVrt($store_path, 'demo.tif');
+        $this->gda2tiles->generateTiles($vrtfilepath,$store_path);
+
+        $coordinates_json_filepath = $this->coordinatorExtractor->extractInfo($store_path . DIRECTORY_SEPARATOR . 'demo.tif',
+            $store_path . DIRECTORY_SEPARATOR . 'coordinates.json');
+
+        $coordinates = $this->coordinatorExtractor->extractCoordinates($coordinates_json_filepath);
+
+        $field = new Field();
+        $field->fieldFolder =   $relative_path;
+        $field->fieldName   =   $fieldName;
+        $field->date        =   $date;
+        $field->user_id     =   $usrid;
+        $field->x_min       =   $coordinates['x_min'];
+        $field->x_max       =   $coordinates['x_max'];
+        $field->y_min       =   $coordinates['y_min'];
+        $field->y_max       =   $coordinates['y_max'];
+        $field->save();
+
+        return redirect('/fieldPhases/'. $fieldName);
     }
 }

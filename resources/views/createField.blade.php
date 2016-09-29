@@ -24,6 +24,15 @@
 
               {{--Iterate Errors--}}
               <br>
+
+              @if (isset($nameExists))
+              <div class="alert alert-danger">
+                  <ul>
+                    <li>{{ $nameExists }}</li>
+                  </ul>
+              </div>
+              @endif
+
               @if (count($errors) > 0)
                 <div class="alert alert-danger">
                   <ul>

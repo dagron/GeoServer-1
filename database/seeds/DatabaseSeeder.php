@@ -19,16 +19,16 @@ class DatabaseSeeder extends Seeder
         $user->password = Hash::make('pass');
         $user->save();
 
-        $field = new \App\Field();
-        $field->fieldName = 'To megalo xorafi';
-        $field->fieldFolder = 'path';
-        $field->user_id = 1;
-        $field->date = date('Y-m-d');
-        $field->x_min = 1;
-        $field->x_max = 1;
-        $field->y_min = 1;
-        $field->y_max = 1;
-
-        $field->save();
+//        $field = new \App\Field();
+//        $field->fieldName = 'To megalo xorafi';
+//        $field->fieldFolder = 'path';
+//        $field->user_id = 1;
+//        $field->date = date('Y-m-d');
+//        $field->x_min = 1;
+//        $field->x_max = 1;
+//        $field->y_min = 1;
+//        $field->y_max = 1;
+//
+//        $field->save();
     }
 }

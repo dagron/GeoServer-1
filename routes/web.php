@@ -34,6 +34,8 @@ Route::get('/showField', function () {
     return view('showField');
 });
 Route::get('/fieldPhases/{fieldName}', 'FieldPhasesController@index');
+Route::get('/createFieldDate/{fieldName}', 'FieldPhasesController@create');
+Route::get('/showField/{fieldName}/{fieldDate}', 'FieldPhasesController@show');
 
 Route::get('/demo', function () {
 
