@@ -15,15 +15,17 @@ class CreateFieldsTable extends Migration
     {
         Schema::create('fields', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('fieldFolder');
+            $table->string('fieldFolder',1024);
             $table->string('fieldName');
             $table->date('date');
-            $table->integer('field_coordinations_id')->unsigned()->nullable();
             $table->integer('user_id')->unsigned();
+            $table->double('x_min');
+            $table->double('x_max');
+            $table->double('y_min');
+            $table->double('y_max');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('field_coordinations_id')->references('id')->on('field_coordinations');
         });
     }
 

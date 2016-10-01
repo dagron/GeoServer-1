@@ -8,10 +8,22 @@
                 <div class="panel-heading">Dashboard</div>
 
                 <div class="panel-body">
-                    You are logged in!
                     @foreach($fields as $field)
-                        <p> {{ $field['fieldName'] }}</p>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div style="float:left" onclick="location.href='/fieldPhases/{{$field['fieldName']}}';" class="btn btn-info"> {{ $field['fieldName'] }}</div>
+                                <form  method="POST" action="http://localhost:8000/api/deletefield" >
+                                    <input type="hidden" name="fieldName" value="{{$field['fieldName']}}">
+                                    <input style="float:right" class="btn btn-danger" type="submit" value="Delete">
+                                </form>
+                            </div>
+                        </div>
+                        <br>
                     @endforeach
+
+                    <br><br><br><br>
+                    <hr>
+                    <div onclick="location.href='createField';" class="btn-info btn">New Field</div>
                 </div>
             </div>
         </div>

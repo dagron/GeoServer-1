@@ -16,15 +16,20 @@ class DatabaseSeeder extends Seeder
         $user = new \App\User();
         $user->email = 'mail@mail.com';
         $user->name = 'nik';
+        $user->type = '1';
         $user->password = Hash::make('pass');
         $user->save();
 
-        $field = new \App\Field();
-        $field->fieldName = 'To megalo xorafi';
-        $field->fieldFolder = 'path';
-        $field->user_id = 1;
-        $field->date = date('Y-m-d');
-        $field->field_coordinations_id = null;
-        $field->save();
+//        $field = new \App\Field();
+//        $field->fieldName = 'To megalo xorafi';
+//        $field->fieldFolder = 'path';
+//        $field->user_id = 1;
+//        $field->date = date('Y-m-d');
+//        $field->x_min = 1;
+//        $field->x_max = 1;
+//        $field->y_min = 1;
+//        $field->y_max = 1;
+//
+//        $field->save();
     }
 }
