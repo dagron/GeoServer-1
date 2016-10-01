@@ -19,8 +19,9 @@
 
               <label for="date">Field Photo</label>
               <input class="form-control" type="file" name="field_image" accept="image/*"><br><br>
-                <input class="btn btn-info" type="submit">
+                <input style="float:right" class="btn btn-info" type="submit" value="Submit">
               </form>
+              <div style="float:left" onclick="location.href='/home'" class="btn-info btn">Back</div>
 
               {{--Iterate Errors--}}
               <br>

@@ -9,11 +9,22 @@
 
                     <div class="panel-body">
                         @foreach($fields as $field)
-                            <div  onclick="location.href='/showField/{{$field['fieldName']}}/{{$field['date']}}';" class="btn btn-info btn-block"> {{ $field['date'] }}</div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div  style="float:left" onclick="location.href='/showField/{{$field['fieldName']}}/{{$field['date']}}';" class="btn btn-info"> {{ $field['date'] }}</div>
+                                    <form  method="POST" action="http://localhost:8000/api/deletefieldDate" >
+                                        <input type="hidden" name="fieldName" value="{{$field['fieldName']}}">
+                                        <input type="hidden" name="fieldId" value="{{$field['id']}}">
+                                        <input style="float:right" class="btn btn-danger" type="submit" value="Delete">
+                                    </form>
+                                </div>
+                            </div>
+                            <br>
                         @endforeach
-
+                        <br><br>
                         <hr>
-                        <div onclick="location.href='/createFieldDate/{{$fields[0]['fieldName']}}';" class="btn-info btn">New Field Date</div>
+                            <div style="float:left" onclick="location.href='/home'" class="btn-info btn">Back</div>
+                            <div style="float:right" onclick="location.href='/createFieldDate/{{$fields[0]['fieldName']}}';" class="btn-info btn">New Field Date</div>
 
                     </div>
                 </div>

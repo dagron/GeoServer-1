@@ -145,4 +145,36 @@ class FieldController extends Controller
 
         return redirect('/fieldPhases/'. $fieldName);
     }
+
+    /**
+     * Delete a field Date
+     *
+     * @param Request $request
+     * @return Redirect
+     */
+    public function deletefieldDate(Request $request)
+    {
+        //delete field
+        $user_field = Field::where('user_id',Auth::user()->id)->where('id', $request->input('fieldId'))->delete();
+        //if deleted successfully
+        if($user_field) {
+            //check if other fields in the group exist
+            $fields = Field::where('user_id',Auth::user()->id)->where('fieldName', $request->input('fieldName'))->get();
+            //redirect approprietly
+            if($fields->count()) {
+                return redirect()->back();
+            } else {
+                return redirect('/home');
+            }
+        } else {
+            return redirect()->back();
+        }
+    }
+
+    public function deleteField(Request $request)
+    {
+        //delete field
+        Field::where('user_id',Auth::user()->id)->where('fieldName', $request->input('fieldName'))->delete();
+        return redirect()->back();
+    }
 }

@@ -26,4 +26,6 @@ Route::get('/user', function (Request $request) {
 // Create/Upload field
 Route::post('uploadfield','FieldController@uploadfield');
 Route::post('uploadfieldDate','FieldController@uploadfieldDate');
+Route::post('deletefieldDate', 'FieldController@deletefieldDate');
+Route::post('deletefield', 'FieldController@deletefield');
 
