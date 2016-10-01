@@ -29,3 +29,6 @@ Route::post('uploadfieldDate','FieldController@uploadfieldDate');
 Route::post('deletefieldDate', 'FieldController@deletefieldDate');
 Route::post('deletefield', 'FieldController@deletefield');
 
+//Users
+Route::get('users/{name}', 'UsersController@getUser');
+Route::post('users/addFarmer', 'UsersController@addFarmerToList');

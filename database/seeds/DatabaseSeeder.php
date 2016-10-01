@@ -20,6 +20,13 @@ class DatabaseSeeder extends Seeder
         $user->password = Hash::make('pass');
         $user->save();
 
+        $user = new \App\User();
+        $user->email = 'mail2@mail.com';
+        $user->name = 'geoponos';
+        $user->type = '2';
+        $user->password = Hash::make('geoponos');
+        $user->save();
+
 //        $field = new \App\Field();
 //        $field->fieldName = 'To megalo xorafi';
 //        $field->fieldFolder = 'path';
