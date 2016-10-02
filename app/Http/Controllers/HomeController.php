@@ -3,20 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Field;
-use Illuminate\Http\Request;
+use Hashids\Hashids;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
+    protected $hashids;
+
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(Hashids $hashids)
     {
         $this->middleware('auth');
+        $this->hashids = $hashids;
     }
 
     /**
@@ -37,7 +40,9 @@ class HomeController extends Controller
                                 ON agriculturists_to_users.farmer_id=users.id
                                 WHERE agriculturists_to_users.agriculturist_id='.Auth::user()->id.'
                                 ');
-
+            foreach($users as $user ) {
+                $user->id = $this->hashids->encode($user->id);
+            }
             return view('agriculturistHome',['users' => $users]);
         }
     }

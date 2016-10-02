@@ -19,7 +19,7 @@
                                 <input class="form-control" type="file" name="field_image" accept="image/*"><br><br>
                                 <input style="float:right" class="btn btn-info" type="submit" value="Submit">
                             </form>
-                            <div style="float:left" onclick="location.href='/home'" class="btn-info btn">Back</div>
+                            <div style="float:left" onclick="goBack()" class="btn-info btn">Back</div>
 
 
                             {{--Iterate Errors--}}

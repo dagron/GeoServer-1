@@ -82,5 +82,6 @@
     <!-- Scripts -->
     <script src="/js/app.js"></script>
     <script src="/js/jquery-3.1.1.js"></script>
+    <script src="/js/geoserver.js"></script>
 </body>
 </html>

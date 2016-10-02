@@ -12,7 +12,7 @@
                             <label for="fieldName">Farmer Name</label>
                             <input id="farmerName" class="form-control" onKeyUp="keyUp()" type="text" name="farmName"><br>
                             <div id="usersResult"></div>
-                            <div style="float:left" onclick="location.href='/home'" class="btn-info btn">Back</div>
+                            <div style="float:left" onclick="goBack()" class="btn-info btn">Back</div>
 
                             <script>
 

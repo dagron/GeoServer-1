@@ -32,3 +32,4 @@ Route::post('deletefield', 'FieldController@deletefield');
 //Users
 Route::get('users/{name}', 'UsersController@getUser');
 Route::post('users/addFarmer', 'UsersController@addFarmerToList');
+Route::post('users/removeFarmer', 'UsersController@removeFarmerFromList');

@@ -40,3 +40,7 @@ Route::get('/addFarmer', function () {
     return view('addFarmer');
 });
 Route::get('/agriculturistFields/{id}', 'AgricalturistViewController@userFields');
+Route::get('/agiculturistFieldPhases/{id}/{fieldName}', 'AgricalturistViewController@userFieldsPhases');
+Route::get('/agiculturistShowField/{id}/{fieldName}/{fieldDate}', 'AgricalturistViewController@showField');
+
+

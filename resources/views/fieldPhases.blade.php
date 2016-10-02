@@ -23,7 +23,7 @@
                         @endforeach
                         <br><br>
                         <hr>
-                            <div style="float:left" onclick="location.href='/home'" class="btn-info btn">Back</div>
+                            <div style="float:left" onclick="goBack()" class="btn-info btn">Back</div>
                             <div style="float:right" onclick="location.href='/createFieldDate/{{$fields[0]['fieldName']}}';" class="btn-info btn">New Field Date</div>
 
                     </div>

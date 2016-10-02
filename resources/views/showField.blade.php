@@ -237,7 +237,7 @@
     </script>
 </head>
     <body onload="load()">
-    <div style="float:left" onclick="location.href='/fieldPhases/{{$field['fieldName']}}'" class="btn-info btn">Back</div><br><br>
+    <div style="float:left" onclick="goBack()" class="btn-info btn">Back</div><br><br>
     <div id="map"></div>
 </body>
 @endsection

@@ -11,12 +11,14 @@
                         @foreach($fields as $field)
                             <div class="row">
                                 <div class="col-md-12">
-                                    <div style="float:left" onclick="location.href='/agiculturistFieldPhases/{{$id}}/{{$field['fieldName']}}';" class="btn btn-info"> {{ $field['fieldName'] }}</div>
+                                    <div  style="float:left" onclick="location.href='/agiculturistShowField/{{$id}}/{{$field['fieldName']}}/{{$field['date']}}';" class="btn btn-info"> {{ $field['date'] }}</div>
                                 </div>
                             </div>
                             <br>
                         @endforeach
-                            <div style="float:left" onclick="goBack()" class="btn-info btn">Back</div>
+                        <br><br>
+                        <hr>
+                        <div style="float:left" onclick="goBack()" class="btn-info btn">Back</div>
                     </div>
                 </div>
             </div>
