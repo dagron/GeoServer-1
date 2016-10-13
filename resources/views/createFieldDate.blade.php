@@ -10,7 +10,7 @@
                     <div class="panel-body">
                         <div class="form-group">
 
-                            <form method="POST" action="http://localhost:8000/api/uploadfieldDate" enctype="multipart/form-data">
+                            <form method="POST" action="/api/uploadfieldDate" enctype="multipart/form-data">
                                 <input type="hidden" name="fieldName" value="{{$field['fieldName']}}">
                                 <label for="date">Date of Photo</label>
                                 <input class="form-control" type="date" name="date"><br>

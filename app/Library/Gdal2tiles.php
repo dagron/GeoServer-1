@@ -11,12 +11,12 @@ class Gdal2tiles
     /**
      * Path to tif-to-vrt bat script
      */
-    const tif_to_vrt_script_path = DIRECTORY_SEPARATOR . "scripts". DIRECTORY_SEPARATOR . "gdal.bat ";
+    const tif_to_vrt_script_path = DIRECTORY_SEPARATOR . "scripts". DIRECTORY_SEPARATOR . "extract_vrt ";
 
     /**
      * Path to generate Tiles script
      */
-    const generate_tiles_sript_path = DIRECTORY_SEPARATOR . "scripts". DIRECTORY_SEPARATOR . "generateTiles.bat";
+    const generate_tiles_sript_path = DIRECTORY_SEPARATOR . "scripts". DIRECTORY_SEPARATOR . "generate_tiles";
 
     /**
      * Generate vrt from tiff file

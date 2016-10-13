@@ -1,0 +1,3 @@
+#!/bin/bash
+
+~/GDAL-2.1.0/scripts/gdal2tiles.py $1 $2

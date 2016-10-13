@@ -14,7 +14,7 @@ class CoordinationExtractor
     /**
      * Path to coordinates extraction script
      */
-    const coordinates_extraction_script_path = DIRECTORY_SEPARATOR . "scripts". DIRECTORY_SEPARATOR . "coordinates_extraction.bat";
+    const coordinates_extraction_script_path = DIRECTORY_SEPARATOR . "scripts". DIRECTORY_SEPARATOR . "coordinates_extraction";
 
     /**
      * Extract the field coordinates from the image

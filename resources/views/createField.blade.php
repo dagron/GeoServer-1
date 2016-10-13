@@ -10,7 +10,7 @@
           <div class="panel-body">
             <div class="form-group">
 
-            <form method="POST" action="http://localhost:8000/api/uploadfield" enctype="multipart/form-data">
+            <form method="POST" action="/api/uploadfield" enctype="multipart/form-data">
               <label for="fieldName">New Field Name</label>
               <input class="form-control" type="text" name="fieldName"><br>
 
@@ -25,7 +25,7 @@
 
               {{--Iterate Errors--}}
               <br>
-
+	      <br>
               @if (isset($nameExists))
               <div class="alert alert-danger">
                   <ul>
