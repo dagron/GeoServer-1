@@ -12,9 +12,10 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div  style="float:left" onclick="location.href='/showField/{{$field['fieldName']}}/{{$field['date']}}';" class="btn btn-info"> {{ $field['date'] }}</div>
-                                    <form  method="POST" action="http://localhost:8000/api/deletefieldDate" >
+                                    <form  method="POST" action="/api/deletefieldDate" >
                                         <input type="hidden" name="fieldName" value="{{$field['fieldName']}}">
                                         <input type="hidden" name="fieldId" value="{{$field['id']}}">
+                                      
                                         <input style="float:right" class="btn btn-danger" type="submit" value="Delete">
                                     </form>
                                 </div>
@@ -25,6 +26,8 @@
                         <hr>
                             <div style="float:left" onclick="goBack()" class="btn-info btn">Back</div>
                             <div style="float:right" onclick="location.href='/createFieldDate/{{$fields[0]['fieldName']}}';" class="btn-info btn">New Field Date</div>
+
+
 
                     </div>
                 </div>

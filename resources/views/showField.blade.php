@@ -13,6 +13,9 @@
         #map { height: 95%; border: 1px solid #888; }
     </style>
     <script src='http://maps.google.com/maps?file=api&amp;v=2&amp;key=AIzaSyCf7Sg2gH85Dp1bbjyqnYw1M8kHkWAct60'></script>
+
+
+
     <script>
         //<![CDATA[
 
@@ -22,10 +25,10 @@
          */
 
         var mapBounds = new GLatLngBounds(new GLatLng({{$field['y_min']}}, {{$field['x_min']}}), new GLatLng({{$field['y_max']}}, {{$field['x_max']}}));
-        var mapMinZoom = 16;
-        var mapMaxZoom = 20;
+        var mapMinZoom = 15;
+        var mapMaxZoom = 24;
 
-        var opacity = 0.75;
+        var opacity = 1;
         var map;
         var hybridOverlay;
 
@@ -161,6 +164,15 @@
             // map.checkResize();
         }
 
+      // var  tile_url = "{{ URL::to($field['fieldFolder']) }}" + "/" + zoom+"/"+tile.x+"/"+y+".png";
+
+        selection = "natural";
+        
+        function select(selection_name){
+            selection = selection_name;
+            load();
+        }
+
 
         /*
          * Main load function:
@@ -205,11 +217,27 @@
                             mercator.fromPixelToLatLng( new GPoint( (tile.x+1)*256, (tile.y)*256 ) , zoom )
                     );
                     if (mapBounds.intersects(tileBounds)) {
-                        return "{{ URL::to($field['fieldFolder']) }}" + "/" + zoom+"/"+tile.x+"/"+y+".png";
+                        if (selection === "natural") {
+                            return "{{ URL::to($field['fieldFolder']) }}" + "/" + zoom+"/"+tile.x+"/"+y+".png";
+                        }
+                        if (selection === "ndvi") {
+                             return "{{ URL::to($field['fieldFolder']) }}" + "/ndvi_tiles/" + zoom+"/"+tile.x+"/"+y+".png"; 
+                        }
+                        if (selection === "cir") {
+                             return "{{ URL::to($field['fieldFolder']) }}" + "/cir_tiles/" + zoom+"/"+tile.x+"/"+y+".png";
+                        }
+                        if (selection === "nir_red_blue") {
+                            return "{{ URL::to($field['fieldFolder']) }}" + "/nir_red_blue_tiles/" + zoom+"/"+tile.x+"/"+y+".png";
+                        }
+                        if (selection === "nir_green_blue") {
+                            return "{{ URL::to($field['fieldFolder']) }}" + "/nir_green_blue_tiles/" + zoom+"/"+tile.x+"/"+y+".png";
+                        }
                     } else {
                         return "http://www.maptiler.org/img/none.png";
                     }
                 }
+                   
+
                 // IE 7-: support for PNG alpha channel
                 // Unfortunately, the opacity for whole overlay is then not changeable, either or...
                 tilelayer.isPng = function() { return true;};
@@ -235,9 +263,18 @@
 
         //]]>
     </script>
+
 </head>
     <body onload="load()">
-    <div style="float:left" onclick="goBack()" class="btn-info btn">Back</div><br><br>
+    <div style="float:left;margin:5px;" onclick="goBack()" class="btn-info btn">Back</div>
+    <div style="float:left;margin:5px;" onclick="select('natural')" class="btn-info btn">Original</div>
+    <div style="float:left;margin:5px;" onclick="select('ndvi')" class="btn-info btn">NDVI</div>
+    <div style="float:left;margin:5px;" onclick="select('cir')" class="btn-info btn">CIR</div>
+    <div style="float:left;margin:5px;" onclick="select('nir_red_blue')" class="btn-info btn">NIR_RED_BLUE</div>
+    <div style="float:left;margin:5px;" onclick="select('nir_green_blue')" class="btn-info btn">NIR_GREEN_BLUE</div>
+
+<br><br>
+
     <div id="map"></div>
 </body>
 @endsection

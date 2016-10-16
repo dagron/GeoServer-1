@@ -10,13 +10,18 @@
                     <div class="panel-body">
                         <div class="form-group">
 
-                            <form method="POST" action="http://localhost:8000/api/uploadfieldDate" enctype="multipart/form-data">
+                            <form method="POST" action="/api/uploadfieldDate" enctype="multipart/form-data">
                                 <input type="hidden" name="fieldName" value="{{$field['fieldName']}}">
                                 <label for="date">Date of Photo</label>
                                 <input class="form-control" type="date" name="date"><br>
 
                                 <label for="date">Field Photo</label>
-                                <input class="form-control" type="file" name="field_image" accept="image/*"><br><br>
+                                <input class="form-control" type="file" name="field_image" accept="image/*">
+                                <div class="checkbox">
+                                     <label><input type="checkbox" name="is_processed" value="is_processed">Field image is already processed </label> 
+                                </div>
+
+                                 <br><br>
                                 <input style="float:right" class="btn btn-info" type="submit" value="Submit">
                             </form>
                             <div style="float:left" onclick="goBack()" class="btn-info btn">Back</div>

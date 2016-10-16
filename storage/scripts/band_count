@@ -1,0 +1,3 @@
+#!/bin/bash
+
+~/GDAL-2.1.0/scripts/band_count.py $1

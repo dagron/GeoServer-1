@@ -1,0 +1,5 @@
+#!/bin/bash
+
+~/GDAL-2.1.0/scripts/gdal_calc.py -A $1 -B $2 --outfile=$3 --calc="(B-A)/(B+A)"
+gdaldem color-relief $3 /var/www/html/GeoServer/storage/scripts/color.txt $4
+

@@ -10,7 +10,7 @@
           <div class="panel-body">
             <div class="form-group">
 
-            <form method="POST" action="http://localhost:8000/api/uploadfield" enctype="multipart/form-data">
+            <form method="POST" action="/api/uploadfield" enctype="multipart/form-data">
               <label for="fieldName">New Field Name</label>
               <input class="form-control" type="text" name="fieldName"><br>
 
@@ -18,14 +18,19 @@
               <input class="form-control" type="date" name="date"><br>
 
               <label for="date">Field Photo</label>
-              <input class="form-control" type="file" name="field_image" accept="image/*"><br><br>
+              <input class="form-control" type="file" name="field_image" accept="image/*">
+                <br>
+                <div class="checkbox">
+                     <label><input type="checkbox" name="is_processed" value="is_processed">Field image is already processed </label> 
+                </div>
+                <br><br>
                 <input style="float:right" class="btn btn-info" type="submit" value="Submit">
               </form>
               <div style="float:left" onclick="goBack()" class="btn-info btn">Back</div>
 
               {{--Iterate Errors--}}
               <br>
-
+	      <br>
               @if (isset($nameExists))
               <div class="alert alert-danger">
                   <ul>

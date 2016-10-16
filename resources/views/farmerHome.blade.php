@@ -12,7 +12,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div style="float:left" onclick="location.href='/fieldPhases/{{$field['fieldName']}}';" class="btn btn-info"> {{ $field['fieldName'] }}</div>
-                                <form  method="POST" action="http://localhost:8000/api/deletefield" >
+                                <form  method="POST" action="/api/deletefield" >
                                     <input type="hidden" name="fieldName" value="{{$field['fieldName']}}">
                                     <input style="float:right" class="btn btn-danger" type="submit" value="Delete">
                                 </form>

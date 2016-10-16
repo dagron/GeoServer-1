@@ -21,7 +21,7 @@
 
                                      $.ajax({
                                          type: 'GET',
-                                         url: "http://localhost:8000/api/users/"+name,
+                                         url: "/api/users/"+name,
                                          contentType: 'application/json; charset=utf-8',
                                          dataType: 'json',
                                          success: function(users) {
@@ -29,7 +29,7 @@
                                              if(users.length > 0) {
                                                  for (i = 0; i < users.length; i++) {
                                                      $('#usersResult').append(
-                                                            '<form method="POST" action="http://localhost:8000/api/users/addFarmer">' +
+                                                            '<form method="POST" action="/api/users/addFarmer">' +
                                                             '<input type="hidden" name="farmerId" value="'+users[i].id+'">' +
                                                             '<input type="submit" class="btn btn-default btn-block" style="text-align: left" value="'+users[i].name+ '">' +
                                                             "<div>" +

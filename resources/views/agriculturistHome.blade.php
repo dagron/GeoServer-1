@@ -24,7 +24,7 @@
                                         '<div style="float:left" onclick="location.href=\'/agriculturistFields/'+users[i].id+'\';" class="btn btn-info">'+
                                         users[i].name +
                                         '</div>'+
-                                        '<form  method="POST" action="http://localhost:8000/api/users/removeFarmer" >'+
+                                        '<form  method="POST" action="/api/users/removeFarmer" >'+
                                         '<input type="hidden" name="userId" value="'+users[i].id+'">'+
                                         '<input style="float:right" class="btn btn-danger" type="submit" value="Delete">'+
                                         '</form>'+
@@ -44,7 +44,7 @@
                                     <div style="float:left" onclick="location.href='/agriculturistFields/{{$user->id}}';" class="btn btn-info">
                                         {{ $user->name }}
                                     </div>
-                                    <form  method="POST" action="http://localhost:8000/api/users/removeFarmer" >
+                                    <form  method="POST" action="/api/users/removeFarmer" >
                                         <input type="hidden" name="userId" value="{{$user->id}}">
                                         <input style="float:right" class="btn btn-danger" type="submit" value="Delete">
                                     </form>

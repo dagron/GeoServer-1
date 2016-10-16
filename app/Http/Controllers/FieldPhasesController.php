@@ -68,7 +68,7 @@ class FieldPhasesController extends Controller
                             ->where('date',$fieldDate)
                             ->first();
         if($user_field) {
-            return view('showfield',['field'=> $user_field]);
+            return view('showField',['field'=> $user_field]);
         } else {
             abort(404);
         }
