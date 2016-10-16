@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use App\Library\ImageProcessing\ImageProcessingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,3 +34,11 @@ Route::post('deletefield', 'FieldController@deletefield');
 Route::get('users/{name}', 'UsersController@getUser');
 Route::post('users/addFarmer', 'UsersController@addFarmerToList');
 Route::post('users/removeFarmer', 'UsersController@removeFarmerFromList');
+
+
+Route::get('test' , function(){
+
+    $con = new ImageProcessingController('~/4band1.tif','~/imgTests/');
+          $con->process();
+});
+

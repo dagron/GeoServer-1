@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# $1 band num
+# $2 input_file
+# $3 output_file
+
+gdal_translate -b $1 $2 $3

@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
+use App\Library\ImageProcessing\ImageProcessingController;
 
 class FieldController extends Controller
 {
@@ -87,6 +88,13 @@ class FieldController extends Controller
         $field->y_max       =   $coordinates['y_max'];
         $field->save();
 
+        // If field image is not already processed 
+        if($request->input('is_processed') != 'is_processed') {
+            // do processes 
+            $processingController = new ImageProcessingController($store_path . DIRECTORY_SEPARATOR . 'demo.tif',$store_path.DIRECTORY_SEPARATOR);
+            //call process
+            $processingController->process();
+        }
         return redirect('/');
     }
 
@@ -142,6 +150,12 @@ class FieldController extends Controller
         $field->y_min       =   $coordinates['y_min'];
         $field->y_max       =   $coordinates['y_max'];
         $field->save();
+
+        // If field image is not already processed 
+        if($request->input('is_processed')) {
+            // do processes 
+
+        }
 
         return redirect('/fieldPhases/'. $fieldName);
     }
