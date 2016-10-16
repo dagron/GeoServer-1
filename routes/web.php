@@ -30,18 +30,17 @@ Route::group(['middleware' => 'web'], function (){
     });
 });
 
-Route::get('/showField', function () {
-    return view('showField');
-});
 Route::get('/fieldPhases/{fieldName}', 'FieldPhasesController@index');
 Route::get('/createFieldDate/{fieldName}', 'FieldPhasesController@create');
 Route::get('/showField/{fieldName}/{fieldDate}', 'FieldPhasesController@show');
 
-Route::get('/demo', function () {
 
-    $obj = new \App\Library\SRTMGeoTIFFReader(public_path('uploads') . DIRECTORY_SEPARATOR . 'user2' . DIRECTORY_SEPARATOR . 'imerominia');
-    dd($obj->getAscentDescent());
-    return 'demo';
+//Agriculturist
+Route::get('/addFarmer', function () {
+    return view('addFarmer');
 });
+Route::get('/agriculturistFields/{id}', 'AgricalturistViewController@userFields');
+Route::get('/agiculturistFieldPhases/{id}/{fieldName}', 'AgricalturistViewController@userFieldsPhases');
+Route::get('/agiculturistShowField/{id}/{fieldName}/{fieldDate}', 'AgricalturistViewController@showField');
 
 

@@ -3,18 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Field;
-use Illuminate\Http\Request;
+use Hashids\Hashids;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
+    protected $hashids;
+
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(Hashids $hashids)
     {
         $this->middleware('auth');
+        $this->hashids = $hashids;
     }
 
     /**
@@ -24,7 +29,21 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $user_fields = Field::where('user_id',1)->get();
-        return view('home',['fields'=> $user_fields]);
+        if (Auth::user()->type == '1'){
+            $user_fields = Field::where('user_id',Auth::user()->id)->get();
+            return view('farmerHome',['fields'=> $user_fields]);
+
+        } else {
+            $users = DB::select('SELECT users.id,users.name
+                                FROM agriculturists_to_users
+                                INNER JOIN users
+                                ON agriculturists_to_users.farmer_id=users.id
+                                WHERE agriculturists_to_users.agriculturist_id='.Auth::user()->id.'
+                                ');
+            foreach($users as $user ) {
+                $user->id = $this->hashids->encode($user->id);
+            }
+            return view('agriculturistHome',['users' => $users]);
+        }
     }
 }
