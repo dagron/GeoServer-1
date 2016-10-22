@@ -8,9 +8,10 @@
 
 namespace App\Http\Controllers;
 
-
+use File;
 use App\Field;
 use Illuminate\Support\Facades\Auth;
+use App\Library\ImageProcessing\ImageProcessingController;
 
 class FieldPhasesController extends Controller
 {
@@ -56,6 +57,21 @@ class FieldPhasesController extends Controller
     }
 
     /**
+     * Return addProcess view with field info
+     */
+    public function addProcess($fieldName, $fieldDate)
+    {
+         $user_field = Field::where('user_id',Auth::user()->id)
+                            ->where('fieldName', $fieldName)
+                            ->where('date',$fieldDate)
+                            ->first();
+        if($user_field) {
+            return view('addProcess',['field'=> $user_field]);
+        } else {
+            abort(404);
+        }
+    }
+    /**
      * Return show field template with the field data
      * @param $fieldName
      * @param $fieldDate
@@ -67,8 +83,17 @@ class FieldPhasesController extends Controller
                             ->where('fieldName', $fieldName)
                             ->where('date',$fieldDate)
                             ->first();
+        
+        $store_path = public_path('uploads'). DIRECTORY_SEPARATOR .
+            hash('md5', Auth::user()->id ) . DIRECTORY_SEPARATOR .
+            hash('md5', $fieldName). DIRECTORY_SEPARATOR .
+            hash('md5', $fieldDate);
+        $store_path .= DIRECTORY_SEPARATOR.ImageProcessingController::extraction_path;
+
+        $folder_list =  array_map('basename',File::directories($store_path)); 
+
         if($user_field) {
-            return view('showField',['field'=> $user_field]);
+            return view('showField',['field'=> $user_field,'processes' => $folder_list]);
         } else {
             abort(404);
         }

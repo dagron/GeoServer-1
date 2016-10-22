@@ -17,6 +17,7 @@
                                         <input type="hidden" name="fieldId" value="{{$field['id']}}">
                                       
                                         <input style="float:right" class="btn btn-danger" type="submit" value="Delete">
+                                        <input style="float:right" onclick="location.href='/addProcess/{{$field['fieldName']}}/{{$field['date']}}'"  class="btn btn-info" type="button" value="Add Process">
                                     </form>
                                 </div>
                             </div>

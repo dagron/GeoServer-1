@@ -12,7 +12,7 @@
         #subheader { height: 12px; text-align: right; font-size: 10px; color: #555;}
         #map { height: 95%; border: 1px solid #888; }
     </style>
-    <script src='http://maps.google.com/maps?file=api&amp;v=2&amp;key=AIzaSyCf7Sg2gH85Dp1bbjyqnYw1M8kHkWAct60'></script>
+    <script src='http://maps.google.com/maps?file=api&amp;v=2&amp;key=AIzaSyC0k-EWY_XwMqvQvg0bwdELarriUrykXZ4'></script>
 
 
 
@@ -204,6 +204,7 @@
                     }
                 } );
 
+
                 var tilelayer = new GTileLayer(GCopyrightCollection(''), mapMinZoom, mapMaxZoom);
                 var mercator = new GMercatorProjection(mapMaxZoom+1);
                 tilelayer.getTileUrl = function(tile,zoom) {
@@ -215,29 +216,20 @@
                     var tileBounds = new GLatLngBounds(
                             mercator.fromPixelToLatLng( new GPoint( (tile.x)*256, (tile.y+1)*256 ) , zoom ),
                             mercator.fromPixelToLatLng( new GPoint( (tile.x+1)*256, (tile.y)*256 ) , zoom )
-                    );
-                    if (mapBounds.intersects(tileBounds)) {
+                    );                        
+
+
+            		if (mapBounds.intersects(tileBounds)) {
                         if (selection === "natural") {
                             return "{{ URL::to($field['fieldFolder']) }}" + "/" + zoom+"/"+tile.x+"/"+y+".png";
                         }
-                        if (selection === "ndvi") {
-                             return "{{ URL::to($field['fieldFolder']) }}" + "/ndvi_tiles/" + zoom+"/"+tile.x+"/"+y+".png"; 
-                        }
-                        if (selection === "cir") {
-                             return "{{ URL::to($field['fieldFolder']) }}" + "/cir_tiles/" + zoom+"/"+tile.x+"/"+y+".png";
-                        }
-                        if (selection === "nir_red_blue") {
-                            return "{{ URL::to($field['fieldFolder']) }}" + "/nir_red_blue_tiles/" + zoom+"/"+tile.x+"/"+y+".png";
-                        }
-                        if (selection === "nir_green_blue") {
-                            return "{{ URL::to($field['fieldFolder']) }}" + "/nir_green_blue_tiles/" + zoom+"/"+tile.x+"/"+y+".png";
-                        }
+                        return "{{ URL::to($field['fieldFolder']) }}" + "/processes/"+selection+"/" + zoom+"/"+tile.x+"/"+y+".png"; 
+                        
                     } else {
                         return "http://www.maptiler.org/img/none.png";
                     }
                 }
-                   
-
+ 
                 // IE 7-: support for PNG alpha channel
                 // Unfortunately, the opacity for whole overlay is then not changeable, either or...
                 tilelayer.isPng = function() { return true;};
@@ -255,8 +247,29 @@
                 map.enableScrollWheelZoom();
 
                 map.setMapType(G_HYBRID_MAP);
-            }
+
+                var marker = new GMarker(new GLatLng({{ $field['y_min']}}, {{$field['x_min']}}))
+                map.addOverlay(marker);
+                  GEvent.addListener(marker, "click", function() {
+                        marker.openInfoWindowHtml('helooooooo');
+                  });
+//event listener
+                GEvent.addListener(map, 'click', function(overlay, latlng, overlaylatlng) {
+                    console.log('click');
+                    var point = new GLatLng( latlng.y, latlng.x ); 
+                var marker = new GMarker(point);
+                map.addOverlay(marker);
+                  GEvent.addListener(marker, "dbclick", function() {
+                        marker.openInfoWindowHtml('helooooooo');
+                  });
+
+
+                });
+
+
+
             resize();
+            }
         }
 
         onresize=function(){ resize(); };
@@ -268,10 +281,12 @@
     <body onload="load()">
     <div style="float:left;margin:5px;" onclick="goBack()" class="btn-info btn">Back</div>
     <div style="float:left;margin:5px;" onclick="select('natural')" class="btn-info btn">Original</div>
-    <div style="float:left;margin:5px;" onclick="select('ndvi')" class="btn-info btn">NDVI</div>
-    <div style="float:left;margin:5px;" onclick="select('cir')" class="btn-info btn">CIR</div>
-    <div style="float:left;margin:5px;" onclick="select('nir_red_blue')" class="btn-info btn">NIR_RED_BLUE</div>
-    <div style="float:left;margin:5px;" onclick="select('nir_green_blue')" class="btn-info btn">NIR_GREEN_BLUE</div>
+    @foreach ($processes as $process)
+    <div style="float:left;margin:5px;" onclick="select('{{$process}}')" class="btn-info btn"> 
+        <?=str_replace('_',' ',str_replace('_tiles', ' ', $process))?> 
+    </div>
+    @endforeach
+
 
 <br><br>
 

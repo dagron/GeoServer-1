@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use App\Library\ImageProcessing\ImageProcessingController;
+use App\Library\ImageProcessing\BandController;
 
 class FieldController extends Controller
 {
@@ -69,7 +70,17 @@ class FieldController extends Controller
 
         $file =  $request->file('field_image');
         $file->move($store_path, 'demo.tif');
-        $vrtfilepath = $this->gda2tiles->tifToVrt($store_path, 'demo.tif');
+
+        $bandController = new BandController();
+        $band_count = $bandController->bandCount($store_path . DIRECTORY_SEPARATOR . 'demo.tif');
+        if($band_count >= 3) {
+            $vrtfilepath = $this->gda2tiles->tifToVrt($store_path, 'demo.tif');
+        } else {
+            $vrtfilepath = $this->gda2tiles->tifToVrtRGBA($store_path, 'demo.tif');
+        }
+
+        
+        
         $this->gda2tiles->generateTiles($vrtfilepath,$store_path);
 
         $coordinates_json_filepath = $this->coordinatorExtractor->extractInfo($store_path . DIRECTORY_SEPARATOR . 'demo.tif',
@@ -94,7 +105,7 @@ class FieldController extends Controller
             $processingController = new ImageProcessingController($store_path . DIRECTORY_SEPARATOR . 'demo.tif',$store_path.DIRECTORY_SEPARATOR);
             //call process
             $processingController->process();
-        }
+      }
         return redirect('/');
     }
 
@@ -160,6 +171,41 @@ class FieldController extends Controller
         return redirect('/fieldPhases/'. $fieldName);
     }
 
+    public function addProcessedField( Request $request){
+        $fieldName = $request->input('fieldName');
+        $fieldDate = $request->input('fieldDate');
+
+        $messages = [
+            'required' => ' The :attribute is required'
+        ];
+
+        $this->validate($request,[
+            'processName' => 'required|max:255',
+            'field_image' => 'required|mimes:tiff'
+        ], $messages);
+
+         $usrid =Auth::user()->id;
+
+        $store_path = public_path('uploads'). DIRECTORY_SEPARATOR .
+            hash('md5', $usrid) . DIRECTORY_SEPARATOR .
+            hash('md5', $fieldName). DIRECTORY_SEPARATOR .
+            hash('md5', $fieldDate);
+
+        $file =  $request->file('field_image');
+        $file->move($store_path, 'demo.tif');
+
+        $bandController = new BandController();
+        $band_count = $bandController->bandCount($store_path . DIRECTORY_SEPARATOR . 'demo.tif');
+        if($band_count >= 3) {
+            $vrtfilepath = $this->gda2tiles->tifToVrt($store_path, 'demo.tif');
+        } else {
+            $vrtfilepath = $this->gda2tiles->tifToVrtRGBA($store_path, 'demo.tif');
+        }
+
+        $this->gda2tiles->generateTiles($vrtfilepath,$store_path . '/processes/'.$request->input('processName').'/');
+        return redirect('/fieldPhases/'. $fieldName);
+ 
+    }
     /**
      * Delete a field Date
      *

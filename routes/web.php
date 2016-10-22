@@ -33,6 +33,7 @@ Route::group(['middleware' => 'web'], function (){
 Route::get('/fieldPhases/{fieldName}', 'FieldPhasesController@index');
 Route::get('/createFieldDate/{fieldName}', 'FieldPhasesController@create');
 Route::get('/showField/{fieldName}/{fieldDate}', 'FieldPhasesController@show');
+Route::get('/addProcess/{fieldName}/{fieldDate}','FieldPhasesController@addProcess');
 
 
 //Agriculturist
