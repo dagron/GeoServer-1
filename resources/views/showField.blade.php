@@ -11,8 +11,17 @@
         #header { height: 43px; padding: 0; background-color: #eee; border: 1px solid #888; }
         #subheader { height: 12px; text-align: right; font-size: 10px; color: #555;}
         #map { height: 95%; border: 1px solid #888; }
+	#marker-selection{
+		 background-color: white;
+  		 position:fixed;
+  		 bottom:0px;
+  		 height:35px;
+		 border:1px solid black;
+		 width: 100%;
+ 		 text-align:center;
+		}
     </style>
-    <script src='http://maps.google.com/maps?file=api&amp;v=2&amp;key=AIzaSyC0k-EWY_XwMqvQvg0bwdELarriUrykXZ4'></script>
+<script src='http://maps.google.com/maps?file=api&amp;v=2&amp;key=AIzaSyC0k-EWY_XwMqvQvg0bwdELarriUrykXZ4'></script>
 
 
 
@@ -32,7 +41,38 @@
         var map;
         var hybridOverlay;
 
-        /*
+        /* Markers cons
+         * ============
+         */ 
+          var markers_json;
+          var markers= new Array();
+            var getMarkers ; // Get markers from server
+
+	/*
+	 * Polygon constants
+	 * ===================
+     */
+    var getPolygons; // Get Polygons from server
+    var savedPolygons = [];
+
+    var global = this;
+	var PolygonMarkers = []; //Array for Map Markers
+	var PolygonPoints = []; //Array for Polygon Node Markers
+	var bounds = new GLatLngBounds; //Polygon Bounds
+	var Polygon; //Polygon overlay object
+	var polygon_resizing = false; //To track Polygon Resizing
+
+	//Polygon Marker/Node icons
+	var redpin = new GIcon(); //Red Pushpin Icon
+	redpin.image = "http://maps.google.com/mapfiles/ms/icons/red-pushpin.png";
+	redpin.iconSize = new GSize(32, 32);
+	redpin.iconAnchor = new GPoint(10, 32);
+	var bluepin = new GIcon(); //Blue Pushpin Icon
+	bluepin.image = "http://maps.google.com/mapfiles/ms/icons/blue-pushpin.png";
+	bluepin.iconSize = new GSize(32, 32);
+	bluepin.iconAnchor = new GPoint(10, 32);
+
+	/*
          * Create a Custom Opacity GControl
          * http://www.maptiler.org/google-maps-overlay-opacity-control/
          */
@@ -173,7 +213,6 @@
             load();
         }
 
-
         /*
          * Main load function:
          */
@@ -243,29 +282,143 @@
                 map.addControl(new CTransparencyControl( overlay ));
 
 
+
                 map.enableContinuousZoom();
                 map.enableScrollWheelZoom();
 
                 map.setMapType(G_HYBRID_MAP);
 
-                var marker = new GMarker(new GLatLng({{ $field['y_min']}}, {{$field['x_min']}}))
-                map.addOverlay(marker);
+
+            GEvent.addListener(map, 'click', function(overlay,clickPoint, overlaypoint) {
+		    if(document.getElementById('marker').checked) {
+		if(clickPoint){
+                  var point = new GLatLng( clickPoint.lat(), clickPoint.lng() ); 
+                  var marker = new GMarker(point);
+                  map.addOverlay(marker);
+
+		          marker.lat = clickPoint.lat();
+		          marker.lng = clickPoint.lng();
+                  marker.id = null;
+                  markers.push(marker)
                   GEvent.addListener(marker, "click", function() {
-                        marker.openInfoWindowHtml('helooooooo');
+                        marker.openInfoWindowHtml(
+                                '<div >'+
+                                'Title:<input type="text" id="title">'+
+                                '<br>Description:<br>'+
+                                '<textarea id="description" rows="5" cols="50"  name="description"></textarea>'+
+                                '<br><button onclick="removeMarkerNote('+ marker.id+')">Delete</button>'+
+				'<button onclick="saveMarkerNote('+marker.lat+','+marker.lng+','+{{$field['id']}}+')">Save</button>');
                   });
-//event listener
-                GEvent.addListener(map, 'click', function(overlay, latlng, overlaylatlng) {
-                    console.log('click');
-                    var point = new GLatLng( latlng.y, latlng.x ); 
-                var marker = new GMarker(point);
-                map.addOverlay(marker);
-                  GEvent.addListener(marker, "dbclick", function() {
-                        marker.openInfoWindowHtml('helooooooo');
-                  });
+		}
+             }
+          });
+
+	/*
+	 * Polygon initialization 
+	 * =======================
+	 */
+
+        var ui = new GMapUIOptions(); //Map UI options
+        ui.maptypes = { normal:true, satellite:true, hybrid:true, physical:false }
+        ui.zoom = {scrollwheel:true, doubleclick:true};
+        ui.controls = { largemapcontrol3d:true, maptypecontrol:true, scalecontrol:true };
+        map.setUI(ui); //Set Map UI options
+
+        //Add Shift+Click event to add Polygon markers
+        GEvent.addListener(map, "click", function(overlay, point, overlaypoint) {
+            var p = (overlaypoint) ? overlaypoint : point;
+            //Add polygon marker if overlay is not an existing marker and shift key is pressed
+            if (document.getElementById('polygon').checked && !checkPolygonMarkers(overlay)) { addMarker(p); }
+        });
+
+		//event listener
+    
+
+            /*
+             * --------------------------
+             *  Add saved markers in Map
+             *  --------------------------
+             */
+         (getMarkers= function(map) {
+          
+             var base_url = window.location.origin;
+
+            var http = new XMLHttpRequest();
+            http.onreadystatechange = function() {//Call a function when the state changes.
+                    if(http.readyState == 4 && http.status == 200) {
+
+                       markers_json = JSON.parse(http.responseText);
+                       
+                       for(var i=0 ; i<markers_json.length ;i++)
+                        {
+                        //create marker
+                        var marker =  new GMarker(new GLatLng(markers_json[i].lat, markers_json[i].lng));
+                        marker.title = markers_json[i].title;
+                        marker.description = markers_json[i].description;            
+                        marker.id = markers_json[i].id;
+                        markers.push(marker);
+                        //add marker to map
+                        map.addOverlay(marker);
 
 
-                });
+                        //pass i in the closure
+                        (function(i) {
 
+
+                            // toggle on click
+                            GEvent.addListener(marker, "click", function() {
+                             markers[i].openInfoWindowHtml(
+                                '<div >'+
+                                'Title:<input type="text" id="title" value="'+markers[i].title +'">'+
+                                '<br>Description:<br>'+
+                                '<textarea id="description" rows="5" cols="50"  name="description">'+markers[i].description+'</textarea>'+
+                                '<br><button onclick="removeMarkerNote('+ markers[i].id+')" >Delete</button>');
+                            });
+                        })(i);
+                       }
+
+                    }
+               }
+
+            http.open("GET", base_url + '/api/markers/{{$field['id']}}');
+            http.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+
+            http.send();
+             })(map);
+
+            /* ---------------------------- 
+             * Get Polygons from serever
+             * ----------------------------
+             */
+
+          (getPolygons = function(map) {
+                var base_url = window.location.origin;
+
+                var http = new XMLHttpRequest();
+                http.onreadystatechange = function() {
+
+                    if(http.readyState == 4 && http.status == 200) {
+                        // Create polygons
+                        var re_polygons =  JSON.parse(http.responseText)
+                               for (var i =0 ; i<re_polygons.length ; i++)
+                               {
+                                   var re_poly_markers = JSON.parse(re_polygons[i].polygon_data);
+                                   var latlngPoints = [];
+                                   for (var j =0; j<re_poly_markers.length; j++)
+                                   {
+                                       console.log(i + " " +j)
+                                      var latlng =  new GLatLng(re_poly_markers[j].lat,re_poly_markers[j].lng);
+                                      latlngPoints.push(latlng);
+                                   }
+                                    drawPolygonFor(latlngPoints);
+                               }
+                    }
+                }
+                http.open("GET", base_url + '/api/polygons/{{$field['id']}}');
+                http.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+
+                http.send();
+             })(map);
 
 
             resize();
@@ -273,6 +426,279 @@
         }
 
         onresize=function(){ resize(); };
+
+		
+        function removeMarkerNote(id) {
+            if(id) {
+            for(var i = 0 ; i< markers.length ; i++){
+                if(markers[i].id === id) {
+                  var base_url = window.location.origin;
+                    markers[i].closeInfoWindow();
+                    markers[i].remove();
+                  var http = new XMLHttpRequest();
+                  http.onreadystatechange = function() {//Call a function when the state changes.
+                    if(http.readyState == 4 && http.status == 200) {
+                                  console.log('deleted');
+                               }
+                  }
+
+                 http.open("DELETE", base_url + '/api/markers/'+markers[i].id );
+                 http.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+
+                 http.send();
+            
+                  }
+            }
+            } else {
+                for (var i =0 ; i<markers.length ; i++ ) {
+                    if(markers[i].id == null) {
+                        markers[i].closeInfoWindow();
+                        markers[i].remove();
+                    }
+                }
+            }
+        }
+        
+
+        function saveMarkerNote(lat, lng, id) {
+            
+            var base_url = window.location.origin;
+
+            var title = document.getElementById('title').value;
+            var description = document.getElementById('description').value;
+            
+            var http = new XMLHttpRequest();
+            var params = {
+                    field_id: id,
+                    lat: lat,
+                    lng: lng,
+                    title: title,
+                    description: description
+            }
+            http.onreadystatechange = function() {//Call a function when the state changes.
+                    if(http.readyState == 4 && http.status == 200) {
+                               console.log(http.responseText);
+                               for(var i =0; i<markers.length ; i++)
+                               {
+                                    markers[i].closeInfoWindow();
+                                    markers[i].remove();
+                                    console.log('loop');
+                               }
+                               
+                               markers = [];
+                               getMarkers(map);
+                           }
+                    }
+
+            http.open("POST", base_url + '/api/createMarker');
+            http.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+
+
+            http.send(JSON.stringify(params));
+            
+        }
+
+/*
+ * Function For Handling Polygon
+ *===================================
+ */
+
+
+// Adds a new Polygon boundary marker
+function addMarker(point) {
+    var markerOptions = { icon: bluepin, draggable: true };
+    var marker = new GMarker(point, markerOptions);
+    PolygonMarkers.push(marker); //Add marker to PolygonMarkers array
+    map.addOverlay(marker); //Add marker on the map
+    GEvent.addListener(marker,'dragstart',function(){ //Add drag start event
+        marker.setImage(redpin.image);
+        polygon_resizing = true;
+    });
+    GEvent.addListener(marker,'drag',function(){ drawPolygon(); }); //Add drag event
+    GEvent.addListener(marker,'dragend',function(){   //Add drag end event
+        marker.setImage(bluepin.image);
+        polygon_resizing = false;
+        drawPolygon();
+        fitPolygon();
+    });
+    GEvent.addListener(marker,'dblclick',function(point) { //Add Ctrl+Click event to remove marker
+         removeMarker(point); 
+    });
+    drawPolygon();
+
+    //If more then 2 nodes then automatically fit the polygon
+    if(PolygonMarkers.length > 2) fitPolygon();
+}
+
+// Removes a Polygon boundary marker
+function removeMarker(point) {
+    if(PolygonMarkers.length == 1){ //Only one marker in the array
+        map.removeOverlay(PolygonMarkers[0]);
+        map.removeOverlay(PolygonMarkers[0]);
+        PolygonMarkers = [];
+        if(Polygon){map.removeOverlay(Polygon)};
+    }
+      else //More then one marker
+      {
+        var RemoveIndex = -1;
+        var Remove;
+        //Search for clicked Marker in PolygonMarkers Array
+        for(var m=0; m<PolygonMarkers.length; m++)
+        {
+            if(PolygonMarkers[m].getPoint().equals(point))
+            {
+                RemoveIndex = m; Remove = PolygonMarkers[m]
+                break;
+            }
+        }
+        //Shift Array elemeents to left
+        for(var n=RemoveIndex; n<PolygonMarkers.length-1; n++)
+        {
+            PolygonMarkers[n] = PolygonMarkers[n+1];
+        }
+        PolygonMarkers.length = PolygonMarkers.length-1 //Decrease Array length by 1
+        map.removeOverlay(Remove); //Remove Marker
+        drawPolygon(); //Redraw Polygon
+      }
+}
+
+//Draw Polygon from the PolygonMarkers Array
+function drawPolygon()
+{
+    PolygonPoints.length=0;
+    for(var m=0; m<PolygonMarkers.length; m++)
+    {
+        PolygonPoints.push(PolygonMarkers[m].getPoint()); //Add Markers to PolygonPoints node array
+    }
+    //Add first marker in the end to close the Polygon
+    PolygonPoints.push(PolygonMarkers[0].getPoint());
+    if(Polygon){ map.removeOverlay(Polygon); } //Remove existing Polygon from Map
+    var fillColor = (polygon_resizing) ? 'red' : 'blue'; //Set Polygon Fill Color
+    Polygon = new GPolygon(PolygonPoints, '#FF0000', 2, 1, fillColor, 0.2); //New GPolygon object
+    map.addOverlay(Polygon); //Add Polygon to the Map
+
+    //TO DO: Function Call triggered after Polygon is drawn
+}
+
+//Draw polygon for loaded set of markers
+function drawPolygonFor(markers)
+{
+   //  var polgon_points.length = 0; 
+   //  for (var i =0 ; i < markers.length ;i++)
+   //  {
+   //      polygon_points.push(markers[i].
+   //  }
+    var fillColor = (polygon_resizing) ? 'red' : 'blue'; //Set Polygon Fill Color
+    Polygon = new GPolygon(markers , '#FF0000', 2, 1, fillColor, 0.2); //New GPolygon object
+    map.addOverlay(Polygon); //Add Polygon to the Map
+
+
+}
+
+
+
+//Fits the Map to Polygon bounds
+function fitPolygon(){
+    bounds = Polygon.getBounds();
+    //map.setCenter(bounds.getCenter(), map.getBoundsZoomLevel(bounds));
+}
+//check is the marker is a polygon boundary marker
+function checkPolygonMarkers(marker) {
+    var flag = false;
+    for (var m = 0; m < PolygonMarkers.length; m++) {
+        if (marker == PolygonMarkers[m])
+        { flag = true; break; }
+    }
+    return flag;
+}
+
+
+
+function savePolygonShape() {
+    console.log('save polugon');
+    console.log(PolygonMarkers);
+
+    var poly_markers = [];
+    for(var i = 0 ; i< PolygonMarkers.length ; i++)
+    {
+        var polygon_point = {
+            lat:PolygonMarkers[i].getPoint().lat(),
+            lng:PolygonMarkers[i].getPoint().lng()
+       }
+        poly_markers.push(polygon_point);
+    }
+
+    var base_url = window.location.origin;
+
+    var params = { 
+        polygon: poly_markers,
+        field_id:"{{$field['id']}}",
+          
+    };
+
+            var http = new XMLHttpRequest();
+            http.onreadystatechange = function() {//Call a function when the state changes.
+                    if(http.readyState == 4 && http.status == 200) {
+                              console.log('polygon saved') 
+                      }
+                           
+                    }
+
+            http.open("POST", base_url + '/api/polygons');
+            http.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+
+            console.log(JSON.stringify(params));
+            http.send(JSON.stringify(params));
+ 
+}
+
+
+
+
+//////////////////[ Key down event handler ]/////////////////////
+//Event handler class to attach events
+var EventUtil = {
+      addHandler: function(element, type, handler){
+            if (element.addEventListener){
+                    element.addEventListener(type, handler, false);
+            } else if (element.attachEvent){
+                    element.attachEvent("on" + type, handler);
+            } else {
+                    element["on" + type] = handler;
+            }
+      }
+};
+
+// Attach Key down/up events to document
+EventUtil.addHandler(document, "keydown", function(event){keyDownHandler(event)});
+EventUtil.addHandler(document, "keyup", function(event){keyUpHandler(event)});
+
+//Checks for shift and Ctrl key press
+function keyDownHandler(e)
+{
+      if (!e) var e = window.event;
+      var target = (!e.target) ? e.srcElement : e.target;
+      if (e.keyCode == 16 && !global.shiftKey) { //Shift Key
+            global.shiftKey = true;
+      }
+      if (e.keyCode == 17 && !global.ctrlKey) { //Ctrl Key
+            global.ctrlKey = true;
+      }
+   
+}
+//Checks for shift and Ctrl key release
+function keyUpHandler(e){
+      if (!e) var e = window.event;
+      if (e.keyCode == 16 && global.shiftKey) { //Shift Key
+            global.shiftKey = false;
+      }
+      if (e.keyCode == 17 && global.ctrlKey) { //Ctrl Key
+            global.ctrlKey = false;
+      }
+   
+}
+
+
 
         //]]>
     </script>
@@ -291,5 +717,25 @@
 <br><br>
 
     <div id="map"></div>
+   <div id="marker-selection">
+    <form>
+     <label class="radio-inline">
+       <input type="radio" name="optradio" id="marker" checked onclick="hideSaveButton()">Marker
+     </label>
+     <label class="radio-inline">
+       <input type="radio" name="optradio" id="polygon" onclick="showSaveButton();" >Polygon
+     </label>
+        <div class='btn' id='polygon-save' style='visibility:hidden;' onclick='savePolygonShape()'> Save Polygon</div>
+      </form>
+     </div>
+
+    <script>
+        function showSaveButton(){
+            document.getElementById('polygon-save').style.visibility = 'visible';
+        }
+        function hideSaveButton(){
+            document.getElementById('polygon-save').style.visibility = 'hidden';
+        }
+</script>
 </body>
 @endsection

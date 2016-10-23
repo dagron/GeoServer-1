@@ -31,6 +31,15 @@ Route::post('deletefieldDate', 'FieldController@deletefieldDate');
 Route::post('deletefield', 'FieldController@deletefield');
 Route::post('addProcess', 'FieldController@addProcessedField');
 
+// Markers
+Route::post('createMarker', 'MarkerController@store');
+Route::get('markers', 'MarkerController@index');
+Route::get('markers/{id}', 'MarkerController@getMarker');
+Route::delete('markers/{id}', 'MarkerController@deleteMarker');
+
+//Polygons
+Route::post('polygons', 'PolygonController@store');
+Route::get('polygons/{id}', 'PolygonController@getPolygon');
 //Users
 Route::get('users/{name}', 'UsersController@getUser');
 Route::post('users/addFarmer', 'UsersController@addFarmerToList');
