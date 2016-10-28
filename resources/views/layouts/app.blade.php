@@ -12,6 +12,7 @@
 
     <!-- Styles -->
     <link href="/css/app.css" rel="stylesheet">
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Scripts -->
     <script>
@@ -56,7 +57,6 @@
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                                 {{ Auth::user()->name }} <span class="caret"></span>
                             </a>
-                            {{ Auth::user()->type }}
                             <ul class="dropdown-menu" role="menu">
                                 <li>
                                     <a href="{{ url('/logout') }}"
@@ -72,6 +72,32 @@
                             </ul>
                         </li>
                     @endif
+                    <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                            Language <?php echo App::getLocale() ?>  <span class="caret"></span>
+                            </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><div onclick="changeLanguage('en')"> Eng</div></li>
+                            <li><div onclick="changeLanguage('gr')">GR</div></li>
+                        </ul>
+                        <script>
+                            function changeLanguage(locale){
+                                    var base_url = window.location.origin;
+
+                                    var http = new XMLHttpRequest();
+                                    http.onreadystatechange = function() {
+                                        if(http.readyState == 4 && http.status == 200) {
+                                              location.reload();
+                                        }
+                                    }
+
+                                    http.open("GET", base_url + '/api/languages/'+locale);
+                                    http.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+
+                                    http.send();
+                            }
+                        </script>
+                    </li>
                 </ul>
             </div>
         </div>

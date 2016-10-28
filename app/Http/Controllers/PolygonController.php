@@ -24,8 +24,8 @@ class PolygonController extends Controller
     {
         return Polygon::where('field_id',$id)->get();
     }
-    public function deleteMarker($id, Request $request)
+    public function deletePolygon($id, Request $request)
     {
-        return Marker::where('id',$id)->delete(); 
+        return Polygon::where('id',$id)->delete(); 
     }
 }

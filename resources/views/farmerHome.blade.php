@@ -23,7 +23,27 @@
 
                     <br><br><br><br>
                     <hr>
-                    <div onclick="location.href='createField';" class="btn-info btn">New Field</div>
+                    
+                    </br> 
+                    <div style="float:left;" onclick="location.href='createField';" class="btn-info btn">New Field</div>
+
+                    <div  style="float:left;" aria-label="Left Align">
+                         <span style="position:relative;top: 5px;left:5px;" onmouseover="showInfo()" onmouseout="hideInfo()" class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                    </div>
+                    <div style="display:none;float:left;margin-left:10px;" id='information-box'>
+                        Gives the possibility to create different field entry for each caltivation area.                         
+                    </div> 
+                   <script>
+                        function showInfo() {
+                            var infobox = document.getElementById("information-box");
+                            infobox.style.display = "block";
+                        }
+
+                        function hideInfo() {
+                            var infobox = document.getElementById("information-box");
+                            infobox.style.display = "none";
+                        }
+                    </script>
                 </div>
             </div>
         </div>

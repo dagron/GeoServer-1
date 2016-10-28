@@ -28,6 +28,23 @@
                             <div style="float:left" onclick="goBack()" class="btn-info btn">Back</div>
                             <div style="float:right" onclick="location.href='/createFieldDate/{{$fields[0]['fieldName']}}';" class="btn-info btn">New Field Date</div>
 
+                    <div  style="float:right;" aria-label="Left Align">
+                         <span style="position:relative;top: 5px;right:5px;" onmouseover="showInfo()" onmouseout="hideInfo()" class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                    </div>
+                    <div style="display:none;float:right;margin-right:10px;" id='information-box'>
+                        Seperate the image dates for easier crops monitoring.                         
+                    </div> 
+                   <script>
+                        function showInfo() {
+                            var infobox = document.getElementById("information-box");
+                            infobox.style.display = "block";
+                        }
+
+                        function hideInfo() {
+                            var infobox = document.getElementById("information-box");
+                            infobox.style.display = "none";
+                        }
+                    </script>
 
 
                     </div>

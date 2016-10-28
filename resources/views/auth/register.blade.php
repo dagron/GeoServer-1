@@ -11,7 +11,7 @@
                         {{ csrf_field() }}
 
                         <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
-                            <label for="name" class="col-md-4 control-label">Name</label>
+                            <label for="name" class="col-md-4 control-label">{{ trans('register.name') }}</label>
 
                             <div class="col-md-6">
                                 <input id="name" type="text" class="form-control" name="name" value="{{ old('name') }}" required autofocus>
@@ -25,7 +25,7 @@
                         </div>
 
                         <div class="form-group{{ $errors->has('type') ? ' has-error' : '' }}">
-                            <label for="type" class="col-md-4 control-label">Type</label>
+                            <label for="type" class="col-md-4 control-label">{{trans('register.type') }}</label>
 
                             <div class="col-md-6">
                                 <select id="type" name="type" class="form-control" required >

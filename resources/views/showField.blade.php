@@ -54,6 +54,7 @@
      */
     var getPolygons; // Get Polygons from server
     var savedPolygons = [];
+    var polygonCenterMarkers = []; // Center Point of polygons
 
     var global = this;
 	var PolygonMarkers = []; //Array for Map Markers
@@ -404,14 +405,42 @@
                                {
                                    var re_poly_markers = JSON.parse(re_polygons[i].polygon_data);
                                    var latlngPoints = [];
-                                   for (var j =0; j<re_poly_markers.length; j++)
+                                   for (var j =0; j<re_poly_markers.length - 1 ; j++)
                                    {
                                        console.log(i + " " +j)
                                       var latlng =  new GLatLng(re_poly_markers[j].lat,re_poly_markers[j].lng);
                                       latlngPoints.push(latlng);
                                    }
-                                    drawPolygonFor(latlngPoints);
-                               }
+                                   drawPolygonFor(latlngPoints);
+                                   var center_marker = re_poly_markers.pop();
+
+                                    //Render Center Marker
+                                     var marker =  new GMarker(new GLatLng(center_marker.lat, center_marker.lng));
+                                     marker.title = center_marker.title;
+                                     marker.description = center_marker.description;            
+                                    marker.id = re_polygons[i].id;
+                                     polygonCenterMarkers.push(marker);
+                               console.log(center_marker.title , center_marker.description); 
+                                   //add marker to map
+                                   map.addOverlay(marker);
+                            var l = polygonCenterMarkers.length -1;
+console.log(polygonCenterMarkers);
+                        //pass i in the closure
+                        (function(l) {
+
+
+                            // toggle on click
+                            GEvent.addListener(marker, "click", function() {
+                             polygonCenterMarkers[l].openInfoWindowHtml(
+                                '<div >'+
+                                'Title:<input type="text" id="title" value="'+polygonCenterMarkers[l].title +'">'+
+                                '<br>Description:<br>'+
+                                '<textarea id="description" rows="5" cols="50"  name="description">'+polygonCenterMarkers[l].description+'</textarea>'+
+                                '<br><button onclick="removePolygonNote('+ polygonCenterMarkers[l].id+')" >Delete</button>');
+                            });
+                        })(i);
+        
+                       }
                     }
                 }
                 http.open("GET", base_url + '/api/polygons/{{$field['id']}}');
@@ -427,7 +456,35 @@
 
         onresize=function(){ resize(); };
 
-		
+
+        function removePolygonNote(id) {
+            for ( var i =0 ; i<polygonCenterMarkers.length ; i++) {
+                if(polygonCenterMarkers[i].id == id) {
+                   var base_url = window.location.origin;
+                   polygonCenterMarkers[i].closeInfoWindow();
+                    polygonCenterMarkers[i].remove();
+                  var http = new XMLHttpRequest();
+                  http.onreadystatechange = function() {//Call a function when the state changes.
+                    if(http.readyState == 4 && http.status == 200) {
+                                  console.log('deleted');
+                                  location.reload();
+                               }
+                  }
+
+                 http.open("DELETE", base_url + '/api/polygons/'+polygonCenterMarkers[i].id );
+                 http.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+
+                 http.send();
+                }
+            }
+
+        }
+
+
+
+
+
+    //Remove Marker     
         function removeMarkerNote(id) {
             if(id) {
             for(var i = 0 ; i< markers.length ; i++){
@@ -589,7 +646,7 @@ function drawPolygonFor(markers)
    //      polygon_points.push(markers[i].
    //  }
     var fillColor = (polygon_resizing) ? 'red' : 'blue'; //Set Polygon Fill Color
-    Polygon = new GPolygon(markers , '#FF0000', 2, 1, fillColor, 0.2); //New GPolygon object
+    var Polygon = new GPolygon(markers , '#FF0000', 2, 1, fillColor, 0.2); //New GPolygon object
     map.addOverlay(Polygon); //Add Polygon to the Map
 
 
@@ -617,7 +674,9 @@ function checkPolygonMarkers(marker) {
 function savePolygonShape() {
     console.log('save polugon');
     console.log(PolygonMarkers);
-
+    if (PolygonMarkers.length<2) {
+        alert("Use at least 3 markers to mark an area");
+    } else {
     var poly_markers = [];
     for(var i = 0 ; i< PolygonMarkers.length ; i++)
     {
@@ -627,6 +686,14 @@ function savePolygonShape() {
        }
         poly_markers.push(polygon_point);
     }
+
+
+    var center_point = getPolygonCenter();
+
+    center_point.title = document.getElementById('polygon-title').value;
+    center_point.description = document.getElementById('polygon-description').value;
+console.log('title just b save ' + center_point.title)
+    poly_markers.push(center_point);
 
     var base_url = window.location.origin;
 
@@ -640,6 +707,7 @@ function savePolygonShape() {
             http.onreadystatechange = function() {//Call a function when the state changes.
                     if(http.readyState == 4 && http.status == 200) {
                               console.log('polygon saved') 
+                              location.reload();
                       }
                            
                     }
@@ -649,9 +717,42 @@ function savePolygonShape() {
 
             console.log(JSON.stringify(params));
             http.send(JSON.stringify(params));
- 
+    }
 }
 
+/*
+ * Find center point of polygon
+ */
+function getPolygonCenter() {
+    var x_min = x_max = PolygonMarkers[0].getPoint().lat();
+    var y_min = y_max = PolygonMarkers[0].getPoint().lng();
+
+    for (var i = 1 ; i<PolygonMarkers.length; i++) {
+        if(PolygonMarkers[i].getPoint().lat() < x_min) {
+            x_min = PolygonMarkers[i].getPoint().lat(); 
+        } 
+
+        if(PolygonMarkers[i].getPoint().lat()> x_max) {
+            x_max = PolygonMarkers[i].getPoint().lat();
+        }
+
+        if(PolygonMarkers[i].getPoint().lng() < y_min) {
+            y_min = PolygonMarkers[i].getPoint().lng()
+        }
+
+        if(PolygonMarkers[i].getPoint().lng() > y_max) {
+            y_max = PolygonMarkers[i].getPoint().lng();
+        }
+    }
+    var x_center = x_min + ((x_max - x_min)/2);
+    var y_center =  y_min + ((y_max - y_min)/2);
+    var center = {
+        lat: x_center,
+        lng: y_center
+    }
+    console.log(center);
+    return center;
+}
 
 
 
@@ -713,6 +814,30 @@ function keyUpHandler(e){
     </div>
     @endforeach
 
+  <!-- Modal -->
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Save Polygon</h4>
+        </div>
+        <div class="modal-body">
+            <label>Marked Area Title</label>
+            <input id="polygon-title" type="text" class="form-control"><br>
+            <label>Marked Area Description</label>
+            <textarea  id="polygon-description"  type="text" class="form-control" rows="5"></textarea><br>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default"   onclick="savePolygonShape()">Save</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      
+          </div>
+            </div>
 
 <br><br>
 
@@ -725,7 +850,7 @@ function keyUpHandler(e){
      <label class="radio-inline">
        <input type="radio" name="optradio" id="polygon" onclick="showSaveButton();" >Polygon
      </label>
-        <div class='btn' id='polygon-save' style='visibility:hidden;' onclick='savePolygonShape()'> Save Polygon</div>
+        <div class='btn' id='polygon-save' style='visibility:hidden;' data-toggle="modal" data-target="#myModal"> Save Polygon</div>
       </form>
      </div>
 

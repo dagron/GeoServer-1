@@ -23,6 +23,10 @@ Route::get('/user', function (Request $request) {
 //Route::post('signup','UserController@signup');
 //Route::get('logout','UserController@logout');
 
+Route::get('languages/{locale}', function($locale) {
+    Session::set('applocale', $locale);//App::setLocale($locale);
+    return json_encode(['locale' => App::getLocale()]); 
+});
 
 // Create/Upload field
 Route::post('uploadfield','FieldController@uploadfield');
@@ -40,6 +44,8 @@ Route::delete('markers/{id}', 'MarkerController@deleteMarker');
 //Polygons
 Route::post('polygons', 'PolygonController@store');
 Route::get('polygons/{id}', 'PolygonController@getPolygon');
+Route::delete('polygons/{id}', 'PolygonController@deletePolygon');
+
 //Users
 Route::get('users/{name}', 'UsersController@getUser');
 Route::post('users/addFarmer', 'UsersController@addFarmerToList');

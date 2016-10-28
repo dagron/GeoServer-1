@@ -56,7 +56,25 @@
 
                         <br><br><br><br>
                         <hr>
-                        <div onclick="location.href='/addFarmer';" class="btn-info btn">Add New Farmer</div>
+                        <div onclick="location.href='/addFarmer';" style="float:left" class="btn-info btn">Add New Farmer</div>
+
+                    <div  style="float:left;" aria-label="Left Align">
+                         <span style="position:relative;top: 5px;left:10px;" onmouseover="showInfo()" onmouseout="hideInfo()" class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                    </div>
+                    <div style="display:none;float:left;margin-left:15px;" id='information-box'>
+                        Save farmers , whose fiels you want to monitor.
+                    </div> 
+                   <script>
+                        function showInfo() {
+                            var infobox = document.getElementById("information-box");
+                            infobox.style.display = "block";
+                        }
+
+                        function hideInfo() {
+                            var infobox = document.getElementById("information-box");
+                            infobox.style.display = "none";
+                        }
+                    </script>
                     </div>
                 </div>
             </div>
