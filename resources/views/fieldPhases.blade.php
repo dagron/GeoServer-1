@@ -5,7 +5,7 @@
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
                 <div class="panel panel-default">
-                    <div class="panel-heading">Dashboard</div>
+                    <div class="panel-heading">GeoServer</div>
 
                     <div class="panel-body">
                         @foreach($fields as $field)
@@ -25,14 +25,14 @@
                         @endforeach
                         <br><br>
                         <hr>
-                            <div style="float:left" onclick="goBack()" class="btn-info btn">Back</div>
-                            <div style="float:right" onclick="location.href='/createFieldDate/{{$fields[0]['fieldName']}}';" class="btn-info btn">New Field Date</div>
+                            <div style="float:left" onclick="goBack()" class="btn-info btn">{{ trans('fieldphases.back') }}</div>
+                            <div style="float:right" onclick="location.href='/createFieldDate/{{$fields[0]['fieldName']}}';" class="btn-info btn">{{ trans('fieldphases.newfielddate') }}</div>
 
                     <div  style="float:right;" aria-label="Left Align">
                          <span style="position:relative;top: 5px;right:5px;" onmouseover="showInfo()" onmouseout="hideInfo()" class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
                     </div>
                     <div style="display:none;float:right;margin-right:10px;" id='information-box'>
-                        Seperate the image dates for easier crops monitoring.                         
+                        {{ trans('fieldphases.info') }}                         
                     </div> 
                    <script>
                         function showInfo() {

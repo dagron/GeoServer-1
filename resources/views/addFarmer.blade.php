@@ -5,14 +5,14 @@
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
                 <div class="panel panel-default">
-                    <div class="panel-heading">Create</div>
+                    <div class="panel-heading">{{ trans('addfarmer.create') }}</div>
 
                     <div class="panel-body">
                         <div class="form-group">
-                            <label for="fieldName">Farmer Name</label>
+                            <label for="fieldName">{{ trans('addfarmer.farmername') }}</label>
                             <input id="farmerName" class="form-control" onKeyUp="keyUp()" type="text" name="farmName"><br>
                             <div id="usersResult"></div>
-                            <div style="float:left" onclick="goBack()" class="btn-info btn">Back</div>
+                            <div style="float:left" onclick="goBack()" class="btn-info btn">{{ trans('addfarmer.back') }}</div>
 
                             <script>
 

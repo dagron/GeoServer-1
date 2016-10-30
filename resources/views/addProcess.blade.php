@@ -5,24 +5,24 @@
     <div class="row">
       <div class="col-md-10 col-md-offset-1">
         <div class="panel panel-default">
-          <div class="panel-heading">Add Processed Image</div>
+          <div class="panel-heading">{{ trans('addprocess.addprocessedimage') }}</div>
 
           <div class="panel-body">
             <div class="form-group">
 
             <form method="POST" action="/api/addProcess" enctype="multipart/form-data">
-              <label for="fieldName">Process Name</label>
+              <label for="fieldName">{{ trans('addprocess.processname') }}</label>
               <input class="form-control" type="text" name="processName">
               <input class="form-control" type="hidden" name="fieldName" value="{{$field['fieldName']}}"><br>
               <input class="form-control" type="hidden" name="fieldDate" value="{{$field['date']}}"><br>
 
 
-              <label for="date">Field Photo</label>
+              <label for="date">{{ trans('addprocess.fieldphoto') }}</label>
               <input class="form-control" type="file" name="field_image" accept="image/*">
                 <br>
                 <input style="float:right" class="btn btn-info" type="submit" value="Submit">
               </form>
-              <div style="float:left" onclick="goBack()" class="btn-info btn">Back</div>
+              <div style="float:left" onclick="goBack()" class="btn-info btn">{{ trans('addprocess.back') }}</div>
 
               {{--Iterate Errors--}}
               <br>

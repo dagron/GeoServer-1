@@ -806,8 +806,8 @@ function keyUpHandler(e){
 
 </head>
     <body onload="load()">
-    <div style="float:left;margin:5px;" onclick="goBack()" class="btn-info btn">Back</div>
-    <div style="float:left;margin:5px;" onclick="select('natural')" class="btn-info btn">Original</div>
+    <div style="float:left;margin:5px;" onclick="goBack()" class="btn-info btn">{{ trans('showfield.back') }}</div>
+    <div style="float:left;margin:5px;" onclick="select('natural')" class="btn-info btn">{{ trans('showfield.original') }}</div>
     @foreach ($processes as $process)
     <div style="float:left;margin:5px;" onclick="select('{{$process}}')" class="btn-info btn"> 
         <?=str_replace('_',' ',str_replace('_tiles', ' ', $process))?> 
@@ -822,17 +822,17 @@ function keyUpHandler(e){
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">Save Polygon</h4>
+          <h4 class="modal-title">{{ trans('showfield.savepolygon') }}</h4>
         </div>
         <div class="modal-body">
-            <label>Marked Area Title</label>
+            <label>{{ trans('showfield.areatitle') }}</label>
             <input id="polygon-title" type="text" class="form-control"><br>
-            <label>Marked Area Description</label>
+            <label>{{ trans('showfield.areadescription') }}</label>
             <textarea  id="polygon-description"  type="text" class="form-control" rows="5"></textarea><br>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default"   onclick="savePolygonShape()">Save</button>
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-default"   onclick="savePolygonShape()">{{ trans('showfield.save') }}</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">{{ trans('showfield.close') }}</button>
         </div>
       </div>
       
@@ -845,12 +845,12 @@ function keyUpHandler(e){
    <div id="marker-selection">
     <form>
      <label class="radio-inline">
-       <input type="radio" name="optradio" id="marker" checked onclick="hideSaveButton()">Marker
+       <input type="radio" name="optradio" id="marker" checked onclick="hideSaveButton()">{{ trans('showfield.marker') }}
      </label>
      <label class="radio-inline">
-       <input type="radio" name="optradio" id="polygon" onclick="showSaveButton();" >Polygon
+       <input type="radio" name="optradio" id="polygon" onclick="showSaveButton();" >{{ trans('showfield.polygon') }}
      </label>
-        <div class='btn' id='polygon-save' style='visibility:hidden;' data-toggle="modal" data-target="#myModal"> Save Polygon</div>
+        <div class='btn' id='polygon-save' style='visibility:hidden;' data-toggle="modal" data-target="#myModal">{{ trans('showfield.savepolygon') }}</div>
       </form>
      </div>
 

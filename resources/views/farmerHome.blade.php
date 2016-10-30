@@ -5,7 +5,7 @@
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
             <div class="panel panel-default">
-                <div class="panel-heading">Dashboard</div>
+                <div class="panel-heading">GeoServer</div>
 
                 <div class="panel-body">
                     @foreach($fields as $field)
@@ -25,13 +25,13 @@
                     <hr>
                     
                     </br> 
-                    <div style="float:left;" onclick="location.href='createField';" class="btn-info btn">New Field</div>
+                    <div style="float:left;" onclick="location.href='createField';" class="btn-info btn">{{ trans('farmerhome.newfield') }}</div>
 
                     <div  style="float:left;" aria-label="Left Align">
                          <span style="position:relative;top: 5px;left:5px;" onmouseover="showInfo()" onmouseout="hideInfo()" class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
                     </div>
                     <div style="display:none;float:left;margin-left:10px;" id='information-box'>
-                        Gives the possibility to create different field entry for each caltivation area.                         
+                        {{ trans('farmerhome.info') }}                         
                     </div> 
                    <script>
                         function showInfo() {
