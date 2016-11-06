@@ -5,10 +5,15 @@
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
                 <div class="panel panel-default">
-                    <div class="panel-heading">Dashboard</div>
+                    <div class="panel-heading">GeoServer</div>
                     <br>
                     <div class="col-md-12">
-                    <input type="text" id="farmerName" onkeyup="keyUp()" class="form-control">
+                <div class="input-group">
+
+                    <span class="input-group-addon" aria-hidden="true"><span class="glyphicon glyphicon-search"></span></span>
+                    <input type="text" id="farmerName" onkeyup="keyUp()" class="form-control" aria-describedby="basic-addon1"/>
+                </div>
+                    <br>
                      </div>
                     <br>
                     <script>
@@ -26,7 +31,7 @@
                                         '</div>'+
                                         '<form  method="POST" action="/api/users/removeFarmer" >'+
                                         '<input type="hidden" name="userId" value="'+users[i].id+'">'+
-                                        '<input style="float:right" class="btn btn-danger" type="submit" value="Delete">'+
+                                        '<input style="float:right" class="btn btn-danger" type="submit" value="{{ trans('general.delete')}}">'+
                                         '</form>'+
                                         '</div>'+
                                         '</div><br>');
@@ -46,7 +51,7 @@
                                     </div>
                                     <form  method="POST" action="/api/users/removeFarmer" >
                                         <input type="hidden" name="userId" value="{{$user->id}}">
-                                        <input style="float:right" class="btn btn-danger" type="submit" value="Delete">
+                                        <input style="float:right" class="btn btn-danger" type="submit" value="{{ trans('general.delete') }}">
                                     </form>
                                 </div>
                             </div>
@@ -56,7 +61,25 @@
 
                         <br><br><br><br>
                         <hr>
-                        <div onclick="location.href='/addFarmer';" class="btn-info btn">Add New Farmer</div>
+                        <div onclick="location.href='/addFarmer';" style="float:left" class="btn-info btn">{{ trans('agricalturisthome.addnewfarmer') }}</div>
+
+                    <div  style="float:left;" aria-label="Left Align">
+                         <span style="position:relative;top: 5px;left:10px;" onmouseover="showInfo()" onmouseout="hideInfo()" class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                    </div>
+                    <div style="display:none;float:left;margin-left:15px;" id='information-box'>
+                        {{ trans('agricalturisthome.info') }}
+                    </div> 
+                   <script>
+                        function showInfo() {
+                            var infobox = document.getElementById("information-box");
+                            infobox.style.display = "block";
+                        }
+
+                        function hideInfo() {
+                            var infobox = document.getElementById("information-box");
+                            infobox.style.display = "none";
+                        }
+                    </script>
                     </div>
                 </div>
             </div>

@@ -5,7 +5,7 @@
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
                 <div class="panel panel-default">
-                    <div class="panel-heading">Dashboard</div>
+                    <div class="panel-heading">GeoServer</div>
 
                     <div class="panel-body">
                         @foreach($fields as $field)
@@ -16,7 +16,12 @@
                                         <input type="hidden" name="fieldName" value="{{$field['fieldName']}}">
                                         <input type="hidden" name="fieldId" value="{{$field['id']}}">
                                       
-                                        <input style="float:right" class="btn btn-danger" type="submit" value="Delete">
+                                        <button style="float:right" class="btn btn-danger" type="submit" value="{{ trans('fieldphases.delete') }}">
+                                            <span class="glyphicon glyphicon-minus"></span>
+                                        </button>
+                                        <button style="float:right" onclick="location.href='/addProcess/{{$field['fieldName']}}/{{$field['date']}}'"  class="btn btn-info" type="button">
+                                            <span class="glyphicon glyphicon-plus"></span>
+                                        </button>
                                     </form>
                                 </div>
                             </div>
@@ -24,9 +29,26 @@
                         @endforeach
                         <br><br>
                         <hr>
-                            <div style="float:left" onclick="goBack()" class="btn-info btn">Back</div>
-                            <div style="float:right" onclick="location.href='/createFieldDate/{{$fields[0]['fieldName']}}';" class="btn-info btn">New Field Date</div>
+                            <div style="float:left" onclick="goBack()" class="btn-info btn">{{ trans('fieldphases.back') }}</div>
+                            <div style="float:right" onclick="location.href='/createFieldDate/{{$fields[0]['fieldName']}}';" class="btn-info btn">{{ trans('fieldphases.newfielddate') }}</div>
 
+                    <div  style="float:right;" aria-label="Left Align">
+                         <span style="position:relative;top: 5px;right:5px;" onmouseover="showInfo()" onmouseout="hideInfo()" class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                    </div>
+                    <div style="display:none;float:right;margin-right:10px;" id='information-box'>
+                        {{ trans('fieldphases.info') }}                         
+                    </div> 
+                   <script>
+                        function showInfo() {
+                            var infobox = document.getElementById("information-box");
+                            infobox.style.display = "block";
+                        }
+
+                        function hideInfo() {
+                            var infobox = document.getElementById("information-box");
+                            infobox.style.display = "none";
+                        }
+                    </script>
 
 
                     </div>

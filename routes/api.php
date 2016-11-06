@@ -23,18 +23,37 @@ Route::get('/user', function (Request $request) {
 //Route::post('signup','UserController@signup');
 //Route::get('logout','UserController@logout');
 
+Route::get('languages/{locale}', function($locale) {
+    Session::set('applocale', $locale);//App::setLocale($locale);
+    return json_encode(['locale' => App::getLocale()]); 
+});
 
 // Create/Upload field
 Route::post('uploadfield','FieldController@uploadfield');
 Route::post('uploadfieldDate','FieldController@uploadfieldDate');
 Route::post('deletefieldDate', 'FieldController@deletefieldDate');
 Route::post('deletefield', 'FieldController@deletefield');
+Route::post('addProcess', 'FieldController@addProcessedField');
+
+// Markers
+Route::post('createMarker', 'MarkerController@store');
+Route::get('markers', 'MarkerController@index');
+Route::get('markers/{id}', 'MarkerController@getMarker');
+Route::delete('markers/{id}', 'MarkerController@deleteMarker');
+
+//Polygons
+Route::post('polygons', 'PolygonController@store');
+Route::get('polygons/{id}', 'PolygonController@getPolygon');
+Route::delete('polygons/{id}', 'PolygonController@deletePolygon');
 
 //Users
 Route::get('users/{name}', 'UsersController@getUser');
 Route::post('users/addFarmer', 'UsersController@addFarmerToList');
 Route::post('users/removeFarmer', 'UsersController@removeFarmerFromList');
 
+//fields
+Route::get('fields/{name}', 'FieldController@searchField');
+Route::get('download/{user_id}/{field_name}/{date}', 'FieldController@download');
 
 Route::get('test' , function(){
 
