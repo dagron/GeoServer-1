@@ -5,9 +5,9 @@
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
             <div class="panel panel-default">
-                <div class="panel-heading">Register</div>
+                <div class="panel-heading">{{ trans('general.register') }}</div>
                 <div class="panel-body">
-                    <form class="form-horizontal" role="form" method="POST" action="{{ url('/register') }}">
+                    <form class="form-horizontal" id="register-form" role="form" method="POST" action="{{ url('/register') }}">
                         {{ csrf_field() }}
 
                         <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
@@ -86,15 +86,48 @@
 
                         <div class="form-group">
                             <div class="col-md-6 col-md-offset-4">
-                                <button type="submit" class="btn btn-primary">
+                                <button onclick="submitForm()" class="btn btn-info">
                                     {{trans('register.registerbtn') }}
                                 </button>
                             </div>
                         </div>
                     </form>
+                    <div id="registration-errors">
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+<script>
+
+function submitForm() {
+    console.log('submit');
+    var errors = [];
+
+    if( $('#name').val()==''){ 
+        errors.push('{{trans('register.errors.name')}}');
+    }
+
+    var testEmail = /^[A-Z0-9._%+-]+@([A-Z0-9-]+\.)+[A-Z]{2,4}$/i;
+    if(!testEmail.test($('#email').val())) {
+        errors.push('{{trans('register.errors.email')}}');
+    }
+    
+    if($('#password').val()== '' || $('#password').val().length < 6){
+        errors.push('{{trans('register.errors.password')}}');
+    }
+
+    if($('#password').val() !== $('#password-confirm').val()) {
+        errors.push('{{trans('register.errors.passwordconfirm')}}');
+    }
+
+    if(errors.length <=0) {
+        $('#register-form').submit();
+    } else {
+         alert(errors.toString());
+    }
+
+}
+</script>
 @endsection

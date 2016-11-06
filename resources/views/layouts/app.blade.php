@@ -15,6 +15,59 @@
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Scripts -->
+
+<!-- custom styles -->
+<style>
+.btn-info {
+    background-color: #006600;
+    border-color: #003300;
+}
+.btn-info:hover,
+.btn-info:focus {
+    background-color: #009900 !important;
+    border-color: #006600 !important;
+}
+.btn-info:active {
+    background-color: #00b300 !important;
+    border-color: #003300 !important;
+}
+.btn-danger {
+    background-color: #b30000;
+    border-color: #990000;
+}
+.btn-danger:hover,
+.btn-danger:focus {
+    background-color: #e60000 !important;
+    border-color: #b30000 !important;
+}
+.btn-danger:active {
+    background-color: #ff0000 !important;
+    border-color: #e60000 !important;
+}
+.dropdown-menu>li>a:hover{
+    background-color: #009900 !important;
+}
+#splashscreen {
+  position: fixed; 
+  top: -50%; 
+  left: -50%; 
+  width: 200%; 
+  height: 200%;    
+  z-index: -10;
+}
+
+#splashscreen img {
+  position: absolute; 
+  top: 0; 
+  left: 0; 
+  right: 0; 
+  bottom: 0; 
+  margin: auto; 
+  min-width: 50%;
+  min-height: 50%;
+}
+</style>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.js"></script>
     <script>
         window.Laravel = <?php echo json_encode([
             'csrfToken' => csrf_token(),
@@ -22,6 +75,11 @@
     </script>
 </head>
 <body>
+
+<div  id="splashscreen">
+     <img src="{{ url('img/splash.jpg') }}" alt=""> 
+</div>
+
     <nav class="navbar navbar-default navbar-static-top">
         <div class="container">
             <div class="navbar-header">
@@ -36,7 +94,7 @@
 
                 <!-- Branding Image -->
                 <a class="navbar-brand" href="{{ url('/') }}">
-                    {{ config('app.name', 'Laravel') }}
+                 <img style="width:40px;height:40px;float:left;margin-right:5px;position:relative;top:-10px;" src="{{ url('img/logo.png')}}" > FarmManager-GeoServer
                 </a>
             </div>
 
@@ -50,8 +108,8 @@
                 <ul class="nav navbar-nav navbar-right">
                     <!-- Authentication Links -->
                     @if (Auth::guest())
-                        <li><a href="{{ url('/login') }}">Login</a></li>
-                        <li><a href="{{ url('/register') }}">Register</a></li>
+                        <li><a href="{{ url('/login') }}">{{trans('general.login') }} </a></li>
+                        <li><a href="{{ url('/register') }}">{{trans('general.register') }}</a></li>
                     @else
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -62,7 +120,7 @@
                                     <a href="{{ url('/logout') }}"
                                         onclick="event.preventDefault();
                                                  document.getElementById('logout-form').submit();">
-                                        Logout
+                                        {{ trans('general.logout') }}
                                     </a>
 
                                     <form id="logout-form" action="{{ url('/logout') }}" method="POST" style="display: none;">
@@ -74,11 +132,13 @@
                     @endif
                     <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                            Language <?php echo App::getLocale() ?>  <span class="caret"></span>
+                            <?php echo strtoupper( App::getLocale() ); ?><span class="caret"></span>
                             </a>
                         <ul class="dropdown-menu" role="menu">
-                            <li><div onclick="changeLanguage('en')"> Eng</div></li>
-                            <li><div onclick="changeLanguage('gr')">GR</div></li>
+                            <div style="margin: 0 auto;width: 50%;">
+                                <li style="margin-bottom:4px"><div onclick="changeLanguage('en')"><img src="{{url('img/en.png') }}"/> EN</div></li>
+                                <li><div onclick="changeLanguage('gr')"><img src="{{url('img/gr.png') }}"/> GR</div></li>
+                            </div>
                         </ul>
                         <script>
                             function changeLanguage(locale){

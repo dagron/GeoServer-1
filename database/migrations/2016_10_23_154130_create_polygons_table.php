@@ -16,10 +16,10 @@ class CreatePolygonsTable extends Migration
         Schema::create('polygons', function(Blueprint $table) {
             $table->increments('id');
             $table->integer('field_id')->unsigned();
-            $table->string('polygon_data');
+            $table->longText('polygon_data');
             $table->timestamps();
 
-            $table->foreign('field_id')->references('id')->on('fields');
+            $table->foreign('field_id')->references('id')->on('fields')->onDelete('cascade');
         }); 
     }
 

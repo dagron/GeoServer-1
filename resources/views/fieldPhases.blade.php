@@ -16,8 +16,12 @@
                                         <input type="hidden" name="fieldName" value="{{$field['fieldName']}}">
                                         <input type="hidden" name="fieldId" value="{{$field['id']}}">
                                       
-                                        <input style="float:right" class="btn btn-danger" type="submit" value="Delete">
-                                        <input style="float:right" onclick="location.href='/addProcess/{{$field['fieldName']}}/{{$field['date']}}'"  class="btn btn-info" type="button" value="Add Process">
+                                        <button style="float:right" class="btn btn-danger" type="submit" value="{{ trans('fieldphases.delete') }}">
+                                            <span class="glyphicon glyphicon-minus"></span>
+                                        </button>
+                                        <button style="float:right" onclick="location.href='/addProcess/{{$field['fieldName']}}/{{$field['date']}}'"  class="btn btn-info" type="button">
+                                            <span class="glyphicon glyphicon-plus"></span>
+                                        </button>
                                     </form>
                                 </div>
                             </div>

@@ -8,7 +8,12 @@
                     <div class="panel-heading">GeoServer</div>
                     <br>
                     <div class="col-md-12">
-                    <input type="text" id="farmerName" onkeyup="keyUp()" class="form-control">
+                <div class="input-group">
+
+                    <span class="input-group-addon" aria-hidden="true"><span class="glyphicon glyphicon-search"></span></span>
+                    <input type="text" id="farmerName" onkeyup="keyUp()" class="form-control" aria-describedby="basic-addon1"/>
+                </div>
+                    <br>
                      </div>
                     <br>
                     <script>
@@ -26,7 +31,7 @@
                                         '</div>'+
                                         '<form  method="POST" action="/api/users/removeFarmer" >'+
                                         '<input type="hidden" name="userId" value="'+users[i].id+'">'+
-                                        '<input style="float:right" class="btn btn-danger" type="submit" value="Delete">'+
+                                        '<input style="float:right" class="btn btn-danger" type="submit" value="{{ trans('general.delete')}}">'+
                                         '</form>'+
                                         '</div>'+
                                         '</div><br>');
@@ -46,7 +51,7 @@
                                     </div>
                                     <form  method="POST" action="/api/users/removeFarmer" >
                                         <input type="hidden" name="userId" value="{{$user->id}}">
-                                        <input style="float:right" class="btn btn-danger" type="submit" value="Delete">
+                                        <input style="float:right" class="btn btn-danger" type="submit" value="{{ trans('general.delete') }}">
                                     </form>
                                 </div>
                             </div>

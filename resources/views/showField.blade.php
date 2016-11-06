@@ -10,11 +10,12 @@
         h1 { margin: 0; padding: 6px; border:0; font-size: 20pt; }
         #header { height: 43px; padding: 0; background-color: #eee; border: 1px solid #888; }
         #subheader { height: 12px; text-align: right; font-size: 10px; color: #555;}
-        #map { height: 95%; border: 1px solid #888; }
+        #map { height: 70%; border: 1px solid #888; }
 	#marker-selection{
 		 background-color: white;
   		 position:fixed;
   		 bottom:0px;
+         left:0px;
   		 height:35px;
 		 border:1px solid black;
 		 width: 100%;
@@ -41,12 +42,19 @@
         var map;
         var hybridOverlay;
 
+        // marker icons sizes
+
+        var icon_height = 38;
+        var icon_width  = 34;
+
         /* Markers cons
          * ============
          */ 
           var markers_json;
           var markers= new Array();
             var getMarkers ; // Get markers from server
+          var marker_icon ='{{url('img/rice.png') }}';
+
 
 	/*
 	 * Polygon constants
@@ -62,6 +70,11 @@
 	var bounds = new GLatLngBounds; //Polygon Bounds
 	var Polygon; //Polygon overlay object
 	var polygon_resizing = false; //To track Polygon Resizing
+
+    var polygon_icon =  '{{url('img/field.png') }}';
+
+
+
 
 	//Polygon Marker/Node icons
 	var redpin = new GIcon(); //Red Pushpin Icon
@@ -198,7 +211,7 @@
             var map = document.getElementById("map");
             var header = document.getElementById("header");
             var subheader = document.getElementById("subheader");
-            map.style.height = (getWindowHeight()-80) + "px";
+            map.style.height = (getWindowHeight()-180) + "px";
             map.style.width = (getWindowWidth()-20) + "px";
             header.style.width = (getWindowWidth()-20) + "px";
             subheader.style.width = (getWindowWidth()-20) + "px";
@@ -294,7 +307,11 @@
 		    if(document.getElementById('marker').checked) {
 		if(clickPoint){
                   var point = new GLatLng( clickPoint.lat(), clickPoint.lng() ); 
+
                   var marker = new GMarker(point);
+                  marker.f.image = marker_icon;
+                  marker.f.iconSize.height = icon_height;
+                  marker.f.iconSize.width = icon_width;
                   map.addOverlay(marker);
 
 		          marker.lat = clickPoint.lat();
@@ -304,16 +321,16 @@
                   GEvent.addListener(marker, "click", function() {
                         marker.openInfoWindowHtml(
                                 '<div >'+
-                                'Title:<input type="text" id="title">'+
-                                '<br>Description:<br>'+
-                                '<textarea id="description" rows="5" cols="50"  name="description"></textarea>'+
-                                '<br><button onclick="removeMarkerNote('+ marker.id+')">Delete</button>'+
-				'<button onclick="saveMarkerNote('+marker.lat+','+marker.lng+','+{{$field['id']}}+')">Save</button>');
+                                '{{ trans("showfield.title")  }}:<input type="text" id="title">'+
+                                '<br>{{ trans("showfield.description")}}:<br>'+
+                                '<textarea type="text" id="description" rows="5" cols="50"  name="description"></textarea>'+
+                                '<br><button onclick="removeMarkerNote('+ marker.id+')">{{ trans("showfield.delete") }} </button>'+
+				'<button onclick="saveMarkerNote('+marker.lat+','+marker.lng+','+{{$field['id']}}+')">{{trans("showfield.save")  }}</button>');
                   });
 		}
              }
-          });
 
+            });
 	/*
 	 * Polygon initialization 
 	 * =======================
@@ -352,8 +369,12 @@
                        
                        for(var i=0 ; i<markers_json.length ;i++)
                         {
+
                         //create marker
                         var marker =  new GMarker(new GLatLng(markers_json[i].lat, markers_json[i].lng));
+                        marker.f.image = marker_icon;
+                        marker.f.iconSize.height = icon_height;
+                        marker.f.iconSize.width = icon_width;
                         marker.title = markers_json[i].title;
                         marker.description = markers_json[i].description;            
                         marker.id = markers_json[i].id;
@@ -370,10 +391,10 @@
                             GEvent.addListener(marker, "click", function() {
                              markers[i].openInfoWindowHtml(
                                 '<div >'+
-                                'Title:<input type="text" id="title" value="'+markers[i].title +'">'+
-                                '<br>Description:<br>'+
-                                '<textarea id="description" rows="5" cols="50"  name="description">'+markers[i].description+'</textarea>'+
-                                '<br><button onclick="removeMarkerNote('+ markers[i].id+')" >Delete</button>');
+                                '{{ trans("showfield.title") }}:<input type="text" id="title" value="'+markers[i].title +'" readonly>'+
+                                '<br>{{ trans("showfiels.description")}}:<br>'+
+                                '<textarea id="description" rows="5" cols="50"  name="description" readonly>'+markers[i].description+'</textarea>'+
+                                '<br><button onclick="removeMarkerNote('+ markers[i].id+')" >{{ trans("showfield.delete") }}</button>');
                             });
                         })(i);
                        }
@@ -414,8 +435,13 @@
                                    drawPolygonFor(latlngPoints);
                                    var center_marker = re_poly_markers.pop();
 
+
+
                                     //Render Center Marker
                                      var marker =  new GMarker(new GLatLng(center_marker.lat, center_marker.lng));
+                                     marker.f.image = polygon_icon;
+                                     marker.f.iconSize.height = icon_height;
+                                     marker.f.iconSize.width = icon_width;
                                      marker.title = center_marker.title;
                                      marker.description = center_marker.description;            
                                     marker.id = re_polygons[i].id;
@@ -433,10 +459,10 @@ console.log(polygonCenterMarkers);
                             GEvent.addListener(marker, "click", function() {
                              polygonCenterMarkers[l].openInfoWindowHtml(
                                 '<div >'+
-                                'Title:<input type="text" id="title" value="'+polygonCenterMarkers[l].title +'">'+
-                                '<br>Description:<br>'+
-                                '<textarea id="description" rows="5" cols="50"  name="description">'+polygonCenterMarkers[l].description+'</textarea>'+
-                                '<br><button onclick="removePolygonNote('+ polygonCenterMarkers[l].id+')" >Delete</button>');
+                                '{{ trans("showfield.title") }}:<input type="text" id="title" value="'+polygonCenterMarkers[l].title +'" readonly>'+
+                                '<br>{{ trans("showfield.description")}}:<br>'+
+                                '<textarea id="description" rows="5" cols="50"  name="description" readonly>'+polygonCenterMarkers[l].description+'</textarea>'+
+                                '<br><button onclick="removePolygonNote('+ polygonCenterMarkers[l].id+')" >{{ trans("showfield.delete")}} </button>');
                             });
                         })(i);
         
@@ -675,7 +701,7 @@ function savePolygonShape() {
     console.log('save polugon');
     console.log(PolygonMarkers);
     if (PolygonMarkers.length<2) {
-        alert("Use at least 3 markers to mark an area");
+        alert("{{ trans('errors.polygon_save') }}");
     } else {
     var poly_markers = [];
     for(var i = 0 ; i< PolygonMarkers.length ; i++)
@@ -803,64 +829,133 @@ function keyUpHandler(e){
 
         //]]>
     </script>
+<style>
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
 
+/* Modal Content */
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+}
+
+/* The Close Button */
+.close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+</style>
 </head>
-    <body onload="load()">
-    <div style="float:left;margin:5px;" onclick="goBack()" class="btn-info btn">{{ trans('showfield.back') }}</div>
-    <div style="float:left;margin:5px;" onclick="select('natural')" class="btn-info btn">{{ trans('showfield.original') }}</div>
-    @foreach ($processes as $process)
-    <div style="float:left;margin:5px;" onclick="select('{{$process}}')" class="btn-info btn"> 
-        <?=str_replace('_',' ',str_replace('_tiles', ' ', $process))?> 
-    </div>
-    @endforeach
 
-  <!-- Modal -->
-  <div class="modal fade" id="myModal" role="dialog">
-    <div class="modal-dialog">
-    
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+    <body onload="load()">
+
+<!-- Modal -->
+<div id="myModal" class="modal">
+    <div class="modal-content">
+            <span class="close"> x </span>
           <h4 class="modal-title">{{ trans('showfield.savepolygon') }}</h4>
-        </div>
-        <div class="modal-body">
+        <div class="">
             <label>{{ trans('showfield.areatitle') }}</label>
-            <input id="polygon-title" type="text" class="form-control"><br>
+            <input id="polygon-title" type="text" class="form-control"></input><br>
             <label>{{ trans('showfield.areadescription') }}</label>
             <textarea  id="polygon-description"  type="text" class="form-control" rows="5"></textarea><br>
         </div>
-        <div class="modal-footer">
+        <div class="">
           <button type="button" class="btn btn-default"   onclick="savePolygonShape()">{{ trans('showfield.save') }}</button>
-          <button type="button" class="btn btn-default" data-dismiss="modal">{{ trans('showfield.close') }}</button>
         </div>
-      </div>
-      
-          </div>
-            </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-2"> 
+     <div style="" onclick="goBack()" class="btn-info btn">{{ trans('showfield.back') }}</div>
+    </div>
+<div class="col-xs-5"> 
+<div class="dropdown">
+  <button class="btn btn-info dropdown-toggle form-control" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+    {{ trans('showfield.processes') }}
+    <span class="caret"></span>
+  </button>
 
-<br><br>
+ <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+    <li style="" onclick="select('natural')" class=""><a>{{ trans('showfield.original') }}</a></li>
+    @foreach ($processes as $process)
+    <li style="" onclick="select('{{$process}}')" class=""> 
+       <a> <?=str_replace('_',' ',str_replace('_tiles', ' ', $process))?> </a>
+    </li>
+    @endforeach
+ </ul>
 
-    <div id="map"></div>
+</div>
+</div>
+    <form action="/api/download/{{ $field['user_id']}}/{{$field['fieldName']}}/{{$field['date']}}" method="get" >
+    <input type="submit" style="float:right;margin-right:40px;" class="btn btn-info" value="{{trans('general.download')}}"> </input>
+    </form>
+</div>
+<br>
+    <div style="" id="map"></div>
    <div id="marker-selection">
     <form>
      <label class="radio-inline">
-       <input type="radio" name="optradio" id="marker" checked onclick="hideSaveButton()">{{ trans('showfield.marker') }}
+       <input type="radio" name="optradio" id="marker" checked onclick="hideSaveButton()">{{ trans('showfield.marker') }}</input>
      </label>
      <label class="radio-inline">
-       <input type="radio" name="optradio" id="polygon" onclick="showSaveButton();" >{{ trans('showfield.polygon') }}
+       <input type="radio" name="optradio" id="polygon" onclick="showSaveButton()" >{{ trans('showfield.polygon') }}</input>
      </label>
-        <div class='btn' id='polygon-save' style='visibility:hidden;' data-toggle="modal" data-target="#myModal">{{ trans('showfield.savepolygon') }}</div>
+        <div class="btn" id="polygon-save" style="visibility:hidden;"  >{{ trans('showfield.savepolygon') }}</div>
       </form>
      </div>
 
     <script>
-        function showSaveButton(){
+var modal = document.getElementById('myModal');
+
+var btn = document.getElementById("polygon-save");
+var span = document.getElementsByClassName("close")[0];
+
+btn.onclick = function() {
+        modal.style.display = "block";
+}
+span.onclick = function() {
+        modal.style.display = "none";
+}
+window.onclick = function(event) {
+        if (event.target == modal) {
+                    modal.style.display = "none";
+                        }
+}
+
+
+       function showSaveButton(){
             document.getElementById('polygon-save').style.visibility = 'visible';
         }
         function hideSaveButton(){
             document.getElementById('polygon-save').style.visibility = 'hidden';
         }
 </script>
+  
 </body>
+
 @endsection

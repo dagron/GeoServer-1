@@ -7,19 +7,26 @@
             <div class="panel panel-default">
                 <div class="panel-heading">GeoServer</div>
 
-                <div class="panel-body">
+                <div class="panel-body" >
+                     <div class="input-group">
+                        <span class="input-group-addon" aria-hidden="true"><span class="glyphicon glyphicon-search"></span></span>
+                         <input type="text" id="fieldName" onkeyup="keyUp()" class="form-control">
+                     </div>
+                <br>
+                <div id="fieldsResult">
                     @foreach($fields as $field)
                         <div class="row">
                             <div class="col-md-12">
                                 <div style="float:left" onclick="location.href='/fieldPhases/{{$field['fieldName']}}';" class="btn btn-info"> {{ $field['fieldName'] }}</div>
                                 <form  method="POST" action="/api/deletefield" >
                                     <input type="hidden" name="fieldName" value="{{$field['fieldName']}}">
-                                    <input style="float:right" class="btn btn-danger" type="submit" value="Delete">
+                                    <input style="float:right" class="btn btn-danger" type="submit" value="{{ trans('farmerhome.delete')}}">
                                 </form>
                             </div>
                         </div>
                         <br>
-                    @endforeach
+                        @endforeach
+                </div>
 
                     <br><br><br><br>
                     <hr>
@@ -44,6 +51,48 @@
                             infobox.style.display = "none";
                         }
                     </script>
+                     <script>
+
+                                 function keyUp(){
+                                     var name = $('#fieldName').val()
+
+                                     $.ajax({
+                                         type: 'GET',
+                                         url: "/api/fields/"+name,
+                                         contentType: 'application/json; charset=utf-8',
+                                         dataType: 'json',
+                                         success: function(fields) {
+                                             $('#fieldsResult').empty();
+                                             if(fields.length > 0) {
+                                                 for (i = 0; i < fields.length; i++) {
+                                                     $('#fieldsResult').append(
+                                                             '<div class="row">'+
+                                                                 '<div class="col-md-12">'+
+                                                                     '<div style="float:left" onclick="location.href=\'/fieldPhases/'+fields[i].fieldName+'\';" class="btn btn-info">'+fields[i].fieldName+'</div>'+
+                                                                      '<form  method="POST" action="/api/deletefield" >'+
+                                                                      '<input type="hidden" name="fieldName" value="'+fields[i].fieldName+'">'+
+                                                                      '<input style="float:right" class="btn btn-danger" type="submit" value=" {{ trans('general.delete') }} ">'+
+                                                                      '</form>'+
+                                                                  '</div>'+
+                                                               '</div>'+
+                                                               '<br>'
+                                                     )
+                                                 }
+                                                 $('#fieldsResult').append("<br>");
+                                             } else {
+                                                 $('#fieldsResult').append(
+                                                         "No field Found" + "<br>"
+                                                 )
+                                             }
+                                         },
+                                         error: function() {
+                                             console.log('no text');
+                                         }
+                                     });
+                                }
+                            </script>
+
+
                 </div>
             </div>
         </div>

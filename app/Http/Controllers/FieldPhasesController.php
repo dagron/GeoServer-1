@@ -32,7 +32,7 @@ class FieldPhasesController extends Controller
      */
     public function index($fieldName)
     {
-        $user_fields = Field::where('user_id',Auth::user()->id)->where('fieldName', $fieldName)->get();
+        $user_fields = Field::where('user_id',Auth::user()->id)->where('fieldName', $fieldName)->orderBy('date', 'ASC')->get();
         if($user_fields->count()) {
             return view('fieldPhases',['fields'=> $user_fields]);
         } else {
@@ -98,4 +98,7 @@ class FieldPhasesController extends Controller
             abort(404);
         }
     }
+
+
+    
 }

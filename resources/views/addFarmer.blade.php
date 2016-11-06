@@ -10,7 +10,12 @@
                     <div class="panel-body">
                         <div class="form-group">
                             <label for="fieldName">{{ trans('addfarmer.farmername') }}</label>
+                             <div class="input-group">
+                            <span class="input-group-addon" aria-hidden="true"><span class="glyphicon glyphicon-search"></span></span>
+                
                             <input id="farmerName" class="form-control" onKeyUp="keyUp()" type="text" name="farmName"><br>
+                            </div>
+                            <br>
                             <div id="usersResult"></div>
                             <div style="float:left" onclick="goBack()" class="btn-info btn">{{ trans('addfarmer.back') }}</div>
 

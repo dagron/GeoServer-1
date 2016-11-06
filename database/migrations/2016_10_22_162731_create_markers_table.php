@@ -22,7 +22,7 @@ class CreateMarkersTable extends Migration
             $table->double('lng');
             $table->timestamps();
 
-            $table->foreign('field_id')->references('id')->on('fields');
+            $table->foreign('field_id')->references('id')->on('fields')->onDelete('cascade');
         });
     }
 

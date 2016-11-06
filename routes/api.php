@@ -51,6 +51,9 @@ Route::get('users/{name}', 'UsersController@getUser');
 Route::post('users/addFarmer', 'UsersController@addFarmerToList');
 Route::post('users/removeFarmer', 'UsersController@removeFarmerFromList');
 
+//fields
+Route::get('fields/{name}', 'FieldController@searchField');
+Route::get('download/{user_id}/{field_name}/{date}', 'FieldController@download');
 
 Route::get('test' , function(){
 
