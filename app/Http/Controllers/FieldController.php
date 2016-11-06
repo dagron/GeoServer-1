@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Field;
+use Hashids\Hashids;
+use ZipArchive;
+use Illuminate\Support\Facades\File;
 use App\Library\CoordinationExtractor;
 use App\Library\Gdal2tiles;
 use Illuminate\Http\Request;
@@ -13,6 +16,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use App\Library\ImageProcessing\ImageProcessingController;
+use App\Library\ImageProcessing\BandController;
 
 class FieldController extends Controller
 {
@@ -39,7 +43,7 @@ class FieldController extends Controller
     public function uploadfield(Request $request)
     {
         $messages = [
-            'required' => ' The :attribute is required'
+            'required' => trans('errors.required') 
         ];
 
         $this->validate($request,[
@@ -69,7 +73,17 @@ class FieldController extends Controller
 
         $file =  $request->file('field_image');
         $file->move($store_path, 'demo.tif');
-        $vrtfilepath = $this->gda2tiles->tifToVrt($store_path, 'demo.tif');
+
+        $bandController = new BandController();
+        $band_count = $bandController->bandCount($store_path . DIRECTORY_SEPARATOR . 'demo.tif');
+        if($band_count >= 3) {
+            $vrtfilepath = $this->gda2tiles->tifToVrt($store_path, 'demo.tif');
+        } else {
+            $vrtfilepath = $this->gda2tiles->tifToVrtRGBA($store_path, 'demo.tif');
+        }
+
+        
+        
         $this->gda2tiles->generateTiles($vrtfilepath,$store_path);
 
         $coordinates_json_filepath = $this->coordinatorExtractor->extractInfo($store_path . DIRECTORY_SEPARATOR . 'demo.tif',
@@ -88,20 +102,23 @@ class FieldController extends Controller
         $field->y_max       =   $coordinates['y_max'];
         $field->save();
 
+        File::makeDirectory($store_path . DIRECTORY_SEPARATOR . 'processes');
+
+
         // If field image is not already processed 
         if($request->input('is_processed') != 'is_processed') {
             // do processes 
             $processingController = new ImageProcessingController($store_path . DIRECTORY_SEPARATOR . 'demo.tif',$store_path.DIRECTORY_SEPARATOR);
             //call process
             $processingController->process();
-        }
+      }
         return redirect('/');
     }
 
     public function uploadfieldDate(Request $request)
     {
         $messages = [
-            'required' => ' The :attribute is required'
+            'required' => trans('errors.required')
         ];
 
         $this->validate($request,[
@@ -132,7 +149,17 @@ class FieldController extends Controller
 
         $file =  $request->file('field_image');
         $file->move($store_path, 'demo.tif');
-        $vrtfilepath = $this->gda2tiles->tifToVrt($store_path, 'demo.tif');
+
+        $bandController = new BandController();
+        $band_count = $bandController->bandCount($store_path . DIRECTORY_SEPARATOR . 'demo.tif');
+        if($band_count >= 3) {
+            $vrtfilepath = $this->gda2tiles->tifToVrt($store_path, 'demo.tif');
+        } else {
+            $vrtfilepath = $this->gda2tiles->tifToVrtRGBA($store_path, 'demo.tif');
+        }
+
+
+
         $this->gda2tiles->generateTiles($vrtfilepath,$store_path);
 
         $coordinates_json_filepath = $this->coordinatorExtractor->extractInfo($store_path . DIRECTORY_SEPARATOR . 'demo.tif',
@@ -151,15 +178,54 @@ class FieldController extends Controller
         $field->y_max       =   $coordinates['y_max'];
         $field->save();
 
-        // If field image is not already processed 
-        if($request->input('is_processed')) {
-            // do processes 
+        File::makeDirectory($store_path . DIRECTORY_SEPARATOR . 'processes');
 
-        }
+        // If field image is not already processed 
+        if($request->input('is_processed') != 'is_processed') {
+            // do processes 
+            $processingController = new ImageProcessingController($store_path . DIRECTORY_SEPARATOR . 'demo.tif',$store_path.DIRECTORY_SEPARATOR);
+            //call process
+            $processingController->process();
+      }
 
         return redirect('/fieldPhases/'. $fieldName);
     }
 
+    public function addProcessedField( Request $request){
+        $fieldName = $request->input('fieldName');
+        $fieldDate = $request->input('fieldDate');
+
+        $messages = [
+             'required' => trans('errors.required')
+        ];
+
+        $this->validate($request,[
+            'processName' => 'required|max:255',
+            'field_image' => 'required|mimes:tiff'
+        ], $messages);
+
+         $usrid =Auth::user()->id;
+
+        $store_path = public_path('uploads'). DIRECTORY_SEPARATOR .
+            hash('md5', $usrid) . DIRECTORY_SEPARATOR .
+            hash('md5', $fieldName). DIRECTORY_SEPARATOR .
+            hash('md5', $fieldDate);
+
+        $file =  $request->file('field_image');
+        $file->move($store_path, 'demo.tif');
+
+        $bandController = new BandController();
+        $band_count = $bandController->bandCount($store_path . DIRECTORY_SEPARATOR . 'demo.tif');
+        if($band_count >= 3) {
+            $vrtfilepath = $this->gda2tiles->tifToVrt($store_path, 'demo.tif');
+        } else {
+            $vrtfilepath = $this->gda2tiles->tifToVrtRGBA($store_path, 'demo.tif');
+        }
+
+        $this->gda2tiles->generateTiles($vrtfilepath,$store_path . '/processes/'.$request->input('processName').'/');
+        return redirect('/fieldPhases/'. $fieldName);
+ 
+    }
     /**
      * Delete a field Date
      *
@@ -190,5 +256,34 @@ class FieldController extends Controller
         //delete field
         Field::where('user_id',Auth::user()->id)->where('fieldName', $request->input('fieldName'))->delete();
         return redirect()->back();
+    }
+    public function searchField($name)
+    {
+        $user_fields = Field::distinct()->select('fieldName')
+                                        ->where('user_id',Auth::user()->id)
+                                        ->where('fieldName', 'like', '%'.$name.'%')
+                                        ->get();
+        return json_encode($user_fields);
+    }
+
+
+    public function download($user_id, $field_name, $date)
+    {
+
+         $store_path = public_path('uploads'). DIRECTORY_SEPARATOR .
+            hash('md5', $user_id) . DIRECTORY_SEPARATOR .
+            hash('md5', $field_name). DIRECTORY_SEPARATOR .
+            hash('md5', $date);
+         
+        $filenames = glob($store_path . DIRECTORY_SEPARATOR . '*.tif');
+
+        $zip = new ZipArchive();
+        $zip->open($store_path . DIRECTORY_SEPARATOR .'geoserver.zip', ZipArchive::CREATE);
+        foreach($filenames as $filename) {
+            $zip->addFile($filename, basename($filename)); 
+        }
+        $zip->close();
+
+        return response()->download($store_path . DIRECTORY_SEPARATOR .'geoserver.zip');
     }
 }

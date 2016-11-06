@@ -30,7 +30,7 @@ class HomeController extends Controller
     public function index()
     {
         if (Auth::user()->type == '1'){
-            $user_fields = Field::where('user_id',Auth::user()->id)->get();
+            $user_fields = Field::distinct()->select('fieldName')->where('user_id',Auth::user()->id)->get();
             return view('farmerHome',['fields'=> $user_fields]);
 
         } else {

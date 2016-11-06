@@ -11,6 +11,10 @@ namespace App\Http\Controllers;
 
 use App\Field;
 use Hashids\Hashids;
+use App\Library\ImageProcessing\ImageProcessingController;
+use Illuminate\Support\Facades\File;
+
+
 
 class AgricalturistViewController extends Controller
 {
@@ -64,8 +68,20 @@ class AgricalturistViewController extends Controller
             ->where('fieldName', $fieldName)
             ->where('date',$fieldDate)
             ->first();
+
+ 
+        $store_path = public_path('uploads'). DIRECTORY_SEPARATOR .
+            hash('md5', $id ) . DIRECTORY_SEPARATOR .
+            hash('md5', $fieldName). DIRECTORY_SEPARATOR .
+            hash('md5', $fieldDate);
+        $store_path .= DIRECTORY_SEPARATOR.ImageProcessingController::extraction_path;
+
+        $folder_list =  array_map('basename',File::directories($store_path)); 
+
+
+
         if($user_field) {
-            return view('showfield',['field'=> $user_field]);
+            return view('showField',['field'=> $user_field,'processes' => $folder_list]);
         } else {
             abort(404);
         }
