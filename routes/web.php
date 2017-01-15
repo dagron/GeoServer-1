@@ -15,9 +15,9 @@ Route::group(['middleware' => ['web']], function (){
     //Auth login routes
 //Auth::routes();
 //home routes
-Route::get('/', 'HomeController@index');
+Route::get('/', 'HomeController@indexStandard');
 Route::get('/home', 'HomeController@index');
-
+Route::get('/home-standard', 'HomeController@indexStandard');
 
 
    Route::get('login', ['as' => 'login', 'uses' => 'Auth\LoginController@showLoginForm']);
@@ -48,13 +48,21 @@ Route::get('/home', 'HomeController@index');
     Route::get('createField', function () {
         return view('createField');
     });
+    Route::get('standard/createField', function () {
+        return view('standard/createField');
+    });
 });
 
+// Pro field views
 Route::get('/fieldPhases/{fieldName}', 'FieldPhasesController@index');
 Route::get('/createFieldDate/{fieldName}', 'FieldPhasesController@create');
 Route::get('/showField/{fieldName}/{fieldDate}', 'FieldPhasesController@show');
 Route::get('/addProcess/{fieldName}/{fieldDate}','FieldPhasesController@addProcess');
 
+// Standard field views
+Route::get('/standard/fieldPhases/{fieldName}', 'StandardFieldPhasesController@index');
+Route::get('/standard/createFieldDate/{fieldName}', 'StandardFieldPhasesController@create');
+Route::get('/standard/showField/{fieldName}/{fieldDate}', 'StandardFieldPhasesController@show');
 
 //Agriculturist
 Route::get('/addFarmer', function () {
@@ -64,4 +72,6 @@ Route::get('/agriculturistFields/{id}', 'AgricalturistViewController@userFields'
 Route::get('/agiculturistFieldPhases/{id}/{fieldName}', 'AgricalturistViewController@userFieldsPhases');
 Route::get('/agiculturistShowField/{id}/{fieldName}/{fieldDate}', 'AgricalturistViewController@showField');
 
-
+//Standard fields
+Route::get('/standard/agriculturistFieldPhases/{id}/{fieldName}','AgricalturistViewController@userStandardFieldsPhases');
+Route::get('/standard/agriculturistShowField/{id}/{fieldName}/{fieldDate}', 'AgricalturistViewController@showStandardField');

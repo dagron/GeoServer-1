@@ -9,8 +9,8 @@
 
                  <div class="panel-body" >
                     <div class="btn-group">
-                        <div  onclick="location.href='home';" class="btn btn-default"  disabled="disabled" >{{trans('farmerhome.pro') }}</div>
-                        <div  onclick="location.href='home-standard';" class="btn btn-info" >{{trans('farmerhome.standard') }}</div>
+                        <div  onclick="location.href='home';" class="btn btn-info" >{{trans('farmerhome.pro') }}</div>
+                        <div  onclick="location.href='home-standard';" class="btn btn-default "  disabled="disabled" >{{trans('farmerhome.standard') }}</div>
                      
                     </div>
                     <div  style="float:left;" aria-label="Left Align">
@@ -29,8 +29,8 @@
                     @foreach($fields as $field)
                         <div class="row">
                             <div class="col-md-12">
-                                <div style="float:left" onclick="location.href='/fieldPhases/{{$field['fieldName']}}';" class="btn btn-info"> {{ $field['fieldName'] }}</div>
-                                <form  method="POST" action="/api/deletefield" >
+                                <div style="float:left" onclick="location.href='/standard/fieldPhases/{{$field['fieldName']}}';" class="btn btn-info"> {{ $field['fieldName'] }}</div>
+                                <form  method="POST" action="/api/standard/deletefield" >
                                     <input type="hidden" name="fieldName" value="{{$field['fieldName']}}">
                                     <input style="float:right" class="btn btn-danger" type="submit" value="{{ trans('farmerhome.delete')}}">
                                 </form>
@@ -44,7 +44,7 @@
                     <hr>
                     
                     </br> 
-                    <div style="float:left;" onclick="location.href='createField';" class="btn-info btn">{{ trans('farmerhome.newfield') }}</div>
+                    <div style="float:left;" onclick="location.href='standard/createField';" class="btn-info btn">{{ trans('farmerhome.newfield') }}</div>
 
                     <div  style="float:left;" aria-label="Left Align">
                          <span style="position:relative;top: 5px;left:5px;" onmouseover="showInfo()" onmouseout="hideInfo()" class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
@@ -89,7 +89,7 @@
 
                                      $.ajax({
                                          type: 'GET',
-                                         url: "/api/fields/"+name,
+                                         url: "/api/standard/fields/"+name,
                                          contentType: 'application/json; charset=utf-8',
                                          dataType: 'json',
                                          success: function(fields) {
@@ -100,7 +100,7 @@
                                                              '<div class="row">'+
                                                                  '<div class="col-md-12">'+
                                                                      '<div style="float:left" onclick="location.href=\'/fieldPhases/'+fields[i].fieldName+'\';" class="btn btn-info">'+fields[i].fieldName+'</div>'+
-                                                                      '<form  method="POST" action="/api/deletefield" >'+
+                                                                      '<form  method="POST" action="/api/standard/deletefield" >'+
                                                                       '<input type="hidden" name="fieldName" value="'+fields[i].fieldName+'">'+
                                                                       '<input style="float:right" class="btn btn-danger" type="submit" value=" {{ trans('general.delete') }} ">'+
                                                                       '</form>'+

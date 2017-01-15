@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Field;
+use App\StandardField;
 use Hashids\Hashids;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -21,7 +22,25 @@ class HomeController extends Controller
         $this->middleware('auth');
         $this->hashids = $hashids;
     }
+    public function indexStandard()
+    {
+        if(Auth::user()->type == '1') {
+           $user_fields = StandardField::distinct()->select('fieldName')->where('user_id',Auth::user()->id)->get();
 
+           return view('farmerHome_Standard',['fields' => $user_fields]);
+        } else {
+             $users = DB::select('SELECT users.id,users.name
+                                FROM agriculturists_to_users
+                                INNER JOIN users
+                                ON agriculturists_to_users.farmer_id=users.id
+                                WHERE agriculturists_to_users.agriculturist_id='.Auth::user()->id.'
+                                ');
+            foreach($users as $user ) {
+                $user->id = $this->hashids->encode($user->id);
+            }
+            return view('agriculturistHome',['users' => $users]);
+        }
+    }
     /**
      * Show the application dashboard.
      *

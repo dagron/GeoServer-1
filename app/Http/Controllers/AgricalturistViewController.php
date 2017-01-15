@@ -10,6 +10,7 @@ namespace App\Http\Controllers;
 
 
 use App\Field;
+use App\StandardField;
 use Hashids\Hashids;
 use App\Library\ImageProcessing\ImageProcessingController;
 use Illuminate\Support\Facades\File;
@@ -43,22 +44,58 @@ class AgricalturistViewController extends Controller
         $ids = $this->hashids->decode($hashedId);
         $id = array_shift($ids);
         $user_fields = Field::where('user_id',$id)->get();
-        return view('/agriculturistFields',['fields' => $user_fields, 'id' => $hashedId]);
-    }
+        $user_standard_fields = StandardField::distinct()->select('fieldName')->where('user_id',$id)->get();
 
-    public function userFieldsPhases($hashedId, $fieldName)
+        return view('/agriculturistFields',['fields' => $user_fields, 'id' => $hashedId, 'standard_fields' => $user_standard_fields]);
+    }
+    public function userStandardFieldsPhases($hashedid, $fieldname)
     {
-        $ids = $this->hashids->decode($hashedId);
+        $ids = $this->hashids->decode($hashedid);
         $id = array_shift($ids);
 
-        $user_fields = Field::where('user_id',$id)->where('fieldName', $fieldName)->get();
+        $user_fields = StandardField::where('user_id',$id)->where('fieldname', $fieldname)->get();
         if($user_fields->count()) {
-            return view('agriculturistFieldsPhases',['fields'=> $user_fields, 'id' => $hashedId]);
+            return view('agriculturistStandardFieldPhases',['fields'=> $user_fields, 'id' => $hashedid]);
         } else {
             abort(404);
         }
     }
 
+
+    public function userfieldsphases($hashedid, $fieldname)
+    {
+        $ids = $this->hashids->decode($hashedid);
+        $id = array_shift($ids);
+
+        $user_fields = field::where('user_id',$id)->where('fieldname', $fieldname)->get();
+        if($user_fields->count()) {
+            return view('agriculturistfieldsphases',['fields'=> $user_fields, 'id' => $hashedid]);
+        } else {
+            abort(404);
+        }
+    }
+
+     public function showStandardField($hashedId, $fieldName, $fieldDate)
+     {
+        $ids = $this->hashids->decode($hashedId);
+        $id = array_shift($ids);
+     
+        $user_field = StandardField::where('user_id',$id)
+                            ->where('fieldName', $fieldName)
+                            ->where('date',$fieldDate)
+                            ->with('comments.user')
+                            ->get();
+
+        if($user_field) {
+            return view('agriculturistStandardShowField',['asset_folder' => url('uploads' . DIRECTORY_SEPARATOR . 'standard'), 'fields'=> $user_field]);
+        } else {
+            abort(404);
+        }
+ 
+
+
+        
+     }  
     public function showField($hashedId, $fieldName, $fieldDate)
     {
         $ids = $this->hashids->decode($hashedId);
