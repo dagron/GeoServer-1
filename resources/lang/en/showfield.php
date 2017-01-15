@@ -2,6 +2,8 @@
 
 return [
 
+'next' => 'Next',
+'previous' => 'Previous',
 'back' => 'Back',
 'processes' => 'Processes',
 'original' => 'Original',

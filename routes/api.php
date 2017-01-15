@@ -35,6 +35,12 @@ Route::post('deletefieldDate', 'FieldController@deletefieldDate');
 Route::post('deletefield', 'FieldController@deletefield');
 Route::post('addProcess', 'FieldController@addProcessedField');
 
+// Create/Upload 
+Route::post('standard/uploadfield', 'StandardFieldController@uploadfield');
+Route::post('standard/deletefield', 'StandardFieldController@deleteField');
+Route::post('standard/uploadfieldDate', 'StandardFieldController@uploadfieldDate');
+Route::post('standard/deletefieldDate', 'StandardFieldController@deletefieldDate');
+
 // Markers
 Route::post('createMarker', 'MarkerController@store');
 Route::get('markers', 'MarkerController@index');
@@ -53,6 +59,11 @@ Route::post('users/removeFarmer', 'UsersController@removeFarmerFromList');
 
 //fields
 Route::get('fields/{name}', 'FieldController@searchField');
+Route::get('standard/fields/{name}', 'StandardFieldController@searchField');
+
+//Comments
+Route::post('standard/comments', 'CommentController@create');
+
 Route::get('download/{user_id}/{field_name}/{date}', 'FieldController@download');
 
 Route::get('test' , function(){
